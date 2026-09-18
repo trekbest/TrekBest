@@ -13,53 +13,72 @@ import {
   Ticket,
   Ship,
   FileCheck,
-  ArrowLeft
+  ArrowLeft,
+  X,
+  PlusCircle,
+  RotateCw
 } from 'lucide-react';
 
-const SERVICE_PRESETS = [
+const DEFAULT_PRESETS = [
   {
-    icon: Hotel,
+    id: 'p-1',
     category: 'HOTEL',
     title: '4★ / 5★ Luxury Resort Stay (MAP Plan)',
     sub: 'Includes Welcome Drink, Daily Buffet Breakfast & Dinner',
-    rate: 14500
+    rate: 14500,
+    isCustom: false
   },
   {
-    icon: Car,
+    id: 'p-2',
     category: 'TRANSFER',
     title: 'Private AC Innova Crysta Cab Sightseeing',
     sub: 'Includes fuel, driver allowance, tolls, parking, and airport transfers',
-    rate: 12000
+    rate: 12000,
+    isCustom: false
   },
   {
-    icon: Plane,
+    id: 'p-3',
     category: 'FLIGHT',
     title: 'Roundtrip Domestic Flight Tickets',
     sub: 'Includes 15kg check-in + 7kg cabin baggage with seat selection',
-    rate: 16800
+    rate: 16800,
+    isCustom: false
   },
   {
-    icon: Ship,
+    id: 'p-4',
     category: 'PACKAGE',
     title: 'Dal Lake Premium Heritage Houseboat Stay',
     sub: 'Includes 1 Hr Shikara Ride & Candlelight Dinner for 2 Guests',
-    rate: 8500
+    rate: 8500,
+    isCustom: false
   },
   {
-    icon: Ticket,
+    id: 'p-5',
     category: 'ACTIVITY',
     title: 'Cable Car / Gondola Phase 1 & 2 Passes',
     sub: 'Direct VIP access barcode passes with guide assistance',
-    rate: 3700
+    rate: 3700,
+    isCustom: false
   },
   {
-    icon: FileCheck,
+    id: 'p-6',
     category: 'VISA',
     title: 'Travel Insurance & Tourist Permits / Passes',
     sub: 'Emergency medical coverage, flight cancellation protection & local permits',
-    rate: 2200
+    rate: 2200,
+    isCustom: false
   }
 ];
+
+const CATEGORY_ICONS = {
+  HOTEL: Hotel,
+  TRANSFER: Car,
+  FLIGHT: Plane,
+  PACKAGE: Ship,
+  ACTIVITY: Ticket,
+  VISA: FileCheck,
+  CUSTOM: Sparkles
+};
 
 const INITIAL_FORM_STATE = {
   clientName: 'Rahul & Priya Sharma',
@@ -114,6 +133,73 @@ export default function InvoiceBuilder({
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(null);
 
+  // Custom Quick Add Presets State (persisted to localStorage)
+  const [presets, setPresets] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tb_quick_presets');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error('Failed to load saved presets:', e);
+    }
+    return DEFAULT_PRESETS;
+  });
+
+  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [customForm, setCustomForm] = useState({
+    title: '',
+    sub: '',
+    category: 'CUSTOM',
+    rate: ''
+  });
+
+  const savePresets = (newPresets) => {
+    setPresets(newPresets);
+    try {
+      localStorage.setItem('tb_quick_presets', JSON.stringify(newPresets));
+    } catch (e) {
+      console.error('Failed to save presets:', e);
+    }
+  };
+
+  const handleAddCustomPreset = (e) => {
+    e.preventDefault();
+    if (!customForm.title.trim()) return;
+
+    const newPreset = {
+      id: 'custom-' + Date.now(),
+      category: customForm.category || 'CUSTOM',
+      title: customForm.title.trim(),
+      sub: customForm.sub.trim() || 'Custom itemized travel service',
+      rate: Number(customForm.rate) || 0,
+      isCustom: true
+    };
+
+    const updated = [...presets, newPreset];
+    savePresets(updated);
+
+    // Also immediately add it to the active invoice!
+    addPresetItem(newPreset);
+
+    // Reset and close
+    setCustomForm({ title: '', sub: '', category: 'CUSTOM', rate: '' });
+    setShowCustomModal(false);
+  };
+
+  const handleDeletePreset = (id, e) => {
+    e.stopPropagation();
+    const updated = presets.filter(p => p.id !== id);
+    savePresets(updated);
+  };
+
+  const handleResetPresets = () => {
+    if (confirm('Reset Quick Add presets to original default services?')) {
+      savePresets(DEFAULT_PRESETS);
+    }
+  };
+
   // If editing an existing invoice
   useEffect(() => {
     if (editingInvoice) {
@@ -162,15 +248,15 @@ export default function InvoiceBuilder({
   };
 
   const addPresetItem = (preset) => {
-    setItems([
-      ...items,
+    setItems(prevItems => [
+      ...prevItems,
       {
         id: Date.now() + Math.random(),
-        category: preset.category,
+        category: preset.category || 'CUSTOM',
         title: preset.title,
-        sub: preset.sub,
+        sub: preset.sub || '',
         qty: 1,
-        rate: preset.rate
+        rate: Number(preset.rate) || 0
       }
     ]);
   };
@@ -426,41 +512,267 @@ export default function InvoiceBuilder({
         border: '1px solid var(--tb-card-border)',
         marginBottom: 24
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <Sparkles size={16} color="var(--tb-orange)" />
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 0.5 }}>
-            QUICK ADD TRAVEL SERVICES (1-CLICK PRESETS):
-          </span>
-        </div>
+        {/* Banner Header with Actions */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 14,
+          flexWrap: 'wrap',
+          gap: 10
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Sparkles size={16} color="var(--tb-orange)" />
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 0.5 }}>
+              QUICK ADD TRAVEL SERVICES (1-CLICK PRESETS):
+            </span>
+            <span style={{
+              fontSize: 11,
+              background: 'rgba(242, 92, 5, 0.15)',
+              color: 'var(--tb-orange)',
+              padding: '2px 8px',
+              borderRadius: 12,
+              fontWeight: 700
+            }}>
+              {presets.length} Presets
+            </span>
+          </div>
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {SERVICE_PRESETS.map((preset, idx) => {
-            const IconComp = preset.icon;
-            return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              type="button"
+              onClick={() => setShowCustomModal(prev => !prev)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 14px',
+                background: showCustomModal ? 'var(--tb-orange)' : 'rgba(242, 92, 5, 0.12)',
+                border: '1px solid var(--tb-orange)',
+                color: showCustomModal ? '#fff' : 'var(--tb-orange)',
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <PlusCircle size={14} />
+              <span>{showCustomModal ? 'Close Form' : '+ Add Custom Preset'}</span>
+            </button>
+
+            {presets.length !== DEFAULT_PRESETS.length && (
               <button
-                key={idx}
                 type="button"
-                onClick={() => addPresetItem(preset)}
+                onClick={handleResetPresets}
+                title="Reset Quick Add to standard defaults"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 8,
-                  padding: '7px 12px',
-                  background: 'var(--tb-dark)',
+                  gap: 4,
+                  padding: '6px 10px',
+                  background: 'transparent',
                   border: '1px solid var(--tb-card-border)',
-                  color: '#fff',
+                  color: 'var(--text-muted)',
                   borderRadius: 8,
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  transition: 'border-color 0.15s ease'
+                  fontSize: 11,
+                  cursor: 'pointer'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--tb-orange)'}
-                onMouseOut={(e) => e.currentTarget.style.borderColor = 'var(--tb-card-border)'}
               >
-                <IconComp size={14} color="var(--tb-orange)" />
-                <span>{preset.title.split('(')[0].trim()}</span>
-                <span style={{ color: 'var(--tb-green)', fontWeight: 600 }}>+₹{preset.rate.toLocaleString('en-IN')}</span>
+                <RotateCw size={11} />
+                <span>Reset</span>
               </button>
+            )}
+          </div>
+        </div>
+
+        {/* Custom Preset Creator Drawer */}
+        {showCustomModal && (
+          <form
+            onSubmit={handleAddCustomPreset}
+            style={{
+              background: 'var(--tb-dark-elevated)',
+              border: '1px solid rgba(242, 92, 5, 0.4)',
+              borderRadius: 12,
+              padding: '16px 18px',
+              marginBottom: 16,
+              boxShadow: '0 6px 20px rgba(0,0,0,0.35)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Sparkles size={15} color="var(--tb-orange)" />
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>
+                  Create Custom 1-Click Preset
+                </span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  (Saves to your browser & adds immediately to invoice)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCustomModal(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '120px 2fr 2fr 130px auto', gap: 10, alignItems: 'end' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Category</label>
+                <select
+                  value={customForm.category}
+                  onChange={e => setCustomForm({ ...customForm, category: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: 'var(--tb-orange)', borderRadius: 8, fontSize: 12, fontWeight: 700 }}
+                >
+                  <option value="CUSTOM">CUSTOM</option>
+                  <option value="HOTEL">HOTEL</option>
+                  <option value="TRANSFER">TRANSFER</option>
+                  <option value="FLIGHT">FLIGHT</option>
+                  <option value="PACKAGE">PACKAGE</option>
+                  <option value="ACTIVITY">ACTIVITY</option>
+                  <option value="VISA">VISA</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Preset Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Dubai Desert Safari with BBQ"
+                  value={customForm.title}
+                  onChange={e => setCustomForm({ ...customForm, title: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 12 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Subtitle / Inclusions</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Dune bashing, camel ride & dinner"
+                  value={customForm.sub}
+                  onChange={e => setCustomForm({ ...customForm, sub: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 12 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Price / Rate (₹) *</label>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  placeholder="e.g. 4500"
+                  value={customForm.rate}
+                  onChange={e => setCustomForm({ ...customForm, rate: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 12 }}
+                />
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '8px 16px',
+                    background: 'var(--tb-orange)',
+                    border: 'none',
+                    color: '#fff',
+                    borderRadius: 8,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    boxShadow: '0 2px 8px rgba(242, 92, 5, 0.3)'
+                  }}
+                >
+                  + Save & Add
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
+
+        {/* 1-Click Preset Chips Grid */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          {presets.map((preset) => {
+            const IconComp = CATEGORY_ICONS[preset.category] || Sparkles;
+            return (
+              <div
+                key={preset.id}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: 'var(--tb-dark)',
+                  border: preset.isCustom ? '1px solid rgba(242, 92, 5, 0.5)' : '1px solid var(--tb-card-border)',
+                  borderRadius: 8,
+                  overflow: 'hidden',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => addPresetItem(preset)}
+                  title={`Click to add to invoice:\n${preset.title}\n(${preset.sub})`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '7px 12px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#fff',
+                    fontSize: 12,
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.parentElement.style.borderColor = 'var(--tb-orange)'}
+                  onMouseOut={(e) => e.currentTarget.parentElement.style.borderColor = preset.isCustom ? 'rgba(242, 92, 5, 0.5)' : 'var(--tb-card-border)'}
+                >
+                  <IconComp size={14} color="var(--tb-orange)" />
+                  <span>{preset.title.split('(')[0].trim()}</span>
+                  {preset.isCustom && (
+                    <span style={{
+                      fontSize: 9,
+                      textTransform: 'uppercase',
+                      background: 'rgba(242, 92, 5, 0.2)',
+                      color: 'var(--tb-orange)',
+                      padding: '1px 5px',
+                      borderRadius: 4,
+                      fontWeight: 700
+                    }}>
+                      Custom
+                    </span>
+                  )}
+                  <span style={{ color: 'var(--tb-green)', fontWeight: 600 }}>
+                    +₹{Number(preset.rate).toLocaleString('en-IN')}
+                  </span>
+                </button>
+
+                {preset.isCustom && (
+                  <button
+                    type="button"
+                    onClick={(e) => handleDeletePreset(preset.id, e)}
+                    title="Remove this custom preset"
+                    style={{
+                      padding: '7px 8px',
+                      background: 'transparent',
+                      border: 'none',
+                      borderLeft: '1px solid var(--tb-card-border)',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = 'var(--tb-red)'}
+                    onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
             );
           })}
         </div>
