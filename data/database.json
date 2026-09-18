@@ -1,0 +1,612 @@
+{
+  "packages": [
+    {
+      "id": "pkg-kashmir",
+      "title": "Enchanting Kashmir Paradise Tour",
+      "dest": "Kashmir, India",
+      "category": "DOMESTIC",
+      "isHoneymoon": true,
+      "duration": "6 Days / 5 Nights",
+      "price": 24999,
+      "currency": "INR",
+      "rating": "4.9",
+      "reviewCount": 128,
+      "image": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=800&q=80",
+      "highlights": [
+        "Srinagar Houseboat",
+        "Gulmarg Gondola",
+        "Pahalgam Valley",
+        "Sonmarg Glacier"
+      ],
+      "itinerary": [
+        {
+          "day": "Day 1",
+          "title": "Arrival Srinagar & Luxury Houseboat Stay",
+          "desc": "Pick up from Srinagar Airport, Shikara ride on Dal Lake, night stay in Deluxe Houseboat."
+        },
+        {
+          "day": "Day 2",
+          "title": "Srinagar to Gulmarg Ski Resort",
+          "desc": "Drive to Gulmarg, enjoy Gondola Cable Car Ride (Phase 1 & 2), snow activities & overnight stay."
+        },
+        {
+          "day": "Day 3",
+          "title": "Gulmarg to Pahalgam (Valley of Shepherds)",
+          "desc": "Visit Awantipora ruins, saffron fields, and Betaab Valley & Aru Valley sightseeing."
+        },
+        {
+          "day": "Day 4",
+          "title": "Pahalgam Excursion & River Rafting",
+          "desc": "Enjoy Lidder River rafting, Baisaran Valley pony ride, relax at luxury pine resort."
+        },
+        {
+          "day": "Day 5",
+          "title": "Pahalgam to Sonmarg Glacier Excursion",
+          "desc": "Day excursion to Sonmarg (Meadow of Gold), Thajiwas Glacier pony ride, return to Srinagar."
+        },
+        {
+          "day": "Day 6",
+          "title": "Srinagar Mughal Gardens & Departure",
+          "desc": "Visit Nishat Bagh, Shalimar Bagh, local market shopping, transfer to Srinagar Airport."
+        }
+      ],
+      "inclusions": [
+        "Flight Tickets Included",
+        "4★/5★ Hotels & Houseboat",
+        "Daily Breakfast & Dinner",
+        "Private Cab for All Transfers",
+        "Shikara Ride & Gondola Passes"
+      ],
+      "invoiceItems": [
+        {
+          "category": "FLIGHT",
+          "title": "IndiGo Return Flight Tickets (DEL - SXR - DEL)",
+          "sub": "Economy Class | 15kg Baggage per pax",
+          "qty": 2,
+          "rate": 7500
+        },
+        {
+          "category": "HOTEL",
+          "title": "5 Nights Stay in Srinagar Houseboat & Gulmarg Resort",
+          "sub": "MAP Plan (Daily Breakfast & Dinner included)",
+          "qty": 1,
+          "rate": 22000
+        },
+        {
+          "category": "TRANSFER",
+          "title": "Private Sedan/SUV for 6 Days Full Sightseeing",
+          "sub": "Driver allowances, toll, fuel & parking included",
+          "qty": 1,
+          "rate": 12998
+        }
+      ]
+    },
+    {
+      "id": "pkg-ladakh",
+      "title": "Ladakh High Passes & Pangong Expedition",
+      "dest": "Leh Ladakh, India",
+      "category": "ADVENTURE",
+      "isHoneymoon": false,
+      "duration": "7 Days / 6 Nights",
+      "price": 32500,
+      "currency": "INR",
+      "rating": "4.9",
+      "reviewCount": 94,
+      "image": "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
+      "highlights": [
+        "Pangong Tso Lake",
+        "Khardung La Pass",
+        "Nubra Valley Dunes",
+        "Monasteries"
+      ],
+      "itinerary": [
+        {
+          "day": "Day 1",
+          "title": "Leh Arrival & Altitude Acclimatization",
+          "desc": "Rest at Leh hotel to get acclimatized to high altitude. Evening visit Leh Market & Shanti Stupa."
+        },
+        {
+          "day": "Day 2",
+          "title": "Leh Local Monasteries & Sham Valley",
+          "desc": "Visit Hall of Fame, Magnetic Hill, Sangam (Confluence of Indus & Zanskar rivers), Pathar Sahib."
+        },
+        {
+          "day": "Day 3",
+          "title": "Leh to Nubra Valley via Khardung La",
+          "desc": "Cross Khardung La (17,582 ft), visit Diskit Monastery, enjoy Double Hump Camel Ride at Hunder."
+        },
+        {
+          "day": "Day 4",
+          "title": "Nubra Valley to Pangong Tso Lake",
+          "desc": "Drive along Shyok river to Pangong Lake. Enjoy magical evening sunset stay in luxury lake camps."
+        },
+        {
+          "day": "Day 5",
+          "title": "Pangong Lake to Hanle / Leh via Chang La",
+          "desc": "Witness spectacular sunrise over Pangong Lake, drive back to Leh crossing Chang La Pass."
+        },
+        {
+          "day": "Day 6",
+          "title": "Leh Shopping & Cultural Evening",
+          "desc": "Explore local Tibetan markets, souvenir shopping, cultural musical night at hotel."
+        },
+        {
+          "day": "Day 7",
+          "title": "Leh Airport Departure",
+          "desc": "Early morning transfer to Leh Kushok Bakula Rimpoche Airport."
+        }
+      ],
+      "inclusions": [
+        "Inner Line Permits",
+        "Oxygen Cylinder Fitted SUV",
+        "Luxury Camp & Hotel Stay",
+        "Breakfast & Dinner",
+        "Airport Pickup & Drop"
+      ],
+      "invoiceItems": [
+        {
+          "category": "HOTEL",
+          "title": "6 Nights Stay in Leh Hotels & Pangong Luxury Camps",
+          "sub": "MAP Plan (Breakfast & Dinner Included)",
+          "qty": 1,
+          "rate": 35000
+        },
+        {
+          "category": "TRANSFER",
+          "title": "Innova / Xylo 4x4 SUV for Nubra & Pangong Circuit",
+          "sub": "Inner Line Permits, Fuel & Oxygen Cylinder Included",
+          "qty": 1,
+          "rate": 30000
+        }
+      ]
+    },
+    {
+      "id": "pkg-kerala",
+      "title": "Enchanting Kerala Backwaters & Munnar",
+      "dest": "Kerala, India",
+      "category": "DOMESTIC",
+      "isHoneymoon": true,
+      "duration": "5 Days / 4 Nights",
+      "price": 21999,
+      "currency": "INR",
+      "rating": "4.8",
+      "reviewCount": 112,
+      "image": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
+      "highlights": [
+        "Munnar Tea Gardens",
+        "Alleppey Houseboat",
+        "Thekkady Spice Plantation",
+        "Kochi Fort"
+      ],
+      "itinerary": [
+        {
+          "day": "Day 1",
+          "title": "Cochin Arrival to Munnar Hill Station",
+          "desc": "Drive to Munnar, view Cheeyappara & Valara Waterfalls enroute, check-in to resort."
+        },
+        {
+          "day": "Day 2",
+          "title": "Munnar Tea Estates & Mattupetty Dam",
+          "desc": "Visit Tea Museum, Eravikulam National Park (Nilgiri Tahr), Echo Point, and Kundala Lake."
+        },
+        {
+          "day": "Day 3",
+          "title": "Munnar to Thekkady Wildlife Sanctuary",
+          "desc": "Drive to Thekkady, spice plantation tour, Periyar Lake boat safari, Kathakali show."
+        },
+        {
+          "day": "Day 4",
+          "title": "Thekkady to Alleppey Houseboat Cruise",
+          "desc": "Check-in to Private AC Deluxe Houseboat, cruise through backwaters, fresh Kerala seafood."
+        },
+        {
+          "day": "Day 5",
+          "title": "Alleppey to Cochin Departure",
+          "desc": "Visit Fort Kochi, Chinese Fishing Nets, Mattancherry Palace, transfer to Cochin Airport."
+        }
+      ],
+      "inclusions": [
+        "Private Houseboat Stay",
+        "Resort Stays",
+        "Breakfast & Houseboat Meals",
+        "AC Cab for Sightseeing"
+      ],
+      "invoiceItems": [
+        {
+          "category": "HOTEL",
+          "title": "4 Nights Luxury Resort & Private Houseboat Stay",
+          "sub": "Deluxe AC Bedroom Houseboat with full board meals",
+          "qty": 1,
+          "rate": 26000
+        },
+        {
+          "category": "TRANSFER",
+          "title": "Private Sedan Cab for 5 Days Sightseeing",
+          "sub": "Pick & Drop Cochin Airport, tolls included",
+          "qty": 1,
+          "rate": 17998
+        }
+      ]
+    },
+    {
+      "id": "pkg-dubai",
+      "title": "Royal Dubai & Abu Dhabi Grand Getaway",
+      "dest": "Dubai, UAE",
+      "category": "INTERNATIONAL",
+      "isHoneymoon": true,
+      "duration": "6 Days / 5 Nights",
+      "price": 54999,
+      "currency": "INR",
+      "rating": "4.95",
+      "reviewCount": 186,
+      "image": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80",
+      "highlights": [
+        "Burj Khalifa 124th Floor",
+        "Desert Safari with BBQ",
+        "Museum of the Future",
+        "Sheikh Zayed Mosque"
+      ],
+      "itinerary": [
+        {
+          "day": "Day 1",
+          "title": "Arrival Dubai Airport & Marina Dhow Cruise",
+          "desc": "Warm greeting at airport, transfer to hotel. Evening Marina Dhow Cruise with dinner."
+        },
+        {
+          "day": "Day 2",
+          "title": "Dubai City Sightseeing & Burj Khalifa",
+          "desc": "Half day Dubai tour, Dubai Frame, visit Burj Khalifa 124th floor at sunset, Dubai Mall Fountain show."
+        },
+        {
+          "day": "Day 3",
+          "title": "Museum of the Future & Desert Safari",
+          "desc": "Morning visit Museum of the Future. Afternoon 4x4 Dune Bashing Desert Safari, BBQ Dinner & Tanoura Show."
+        },
+        {
+          "day": "Day 4",
+          "title": "Full Day Abu Dhabi City & Grand Mosque",
+          "desc": "Drive to Abu Dhabi, Sheikh Zayed Grand Mosque tour, Ferrari World photo stop, dates market."
+        },
+        {
+          "day": "Day 5",
+          "title": "Atlantis Aquaventure & Leisure Shopping",
+          "desc": "Day pass to Atlantis Aquaventure Waterpark & Lost Chambers Aquarium, evening Gold Souk shopping."
+        },
+        {
+          "day": "Day 6",
+          "title": "Departure Dubai Airport",
+          "desc": "Free morning for last minute shopping, airport transfer."
+        }
+      ],
+      "inclusions": [
+        "UAE Tourist Visa & Insurance",
+        "4★ City Hotel Stay",
+        "Burj Khalifa 124 Floor Ticket",
+        "Desert Safari & Dhow Cruise",
+        "Private Airport Transfers"
+      ],
+      "invoiceItems": [
+        {
+          "category": "VISA",
+          "title": "30 Days UAE Express Tourist Visa & Medical Insurance",
+          "sub": "2 Passengers",
+          "qty": 2,
+          "rate": 7800
+        },
+        {
+          "category": "HOTEL",
+          "title": "5 Nights Stay in 4★ Dubai Marina Hotel",
+          "sub": "Daily Buffet Breakfast included",
+          "qty": 1,
+          "rate": 42000
+        },
+        {
+          "category": "ACTIVITY",
+          "title": "Burj Khalifa 124th Floor + Desert Safari + Dhow Cruise",
+          "sub": "Skip the line tickets with transfer",
+          "qty": 2,
+          "rate": 14000
+        }
+      ]
+    },
+    {
+      "id": "pkg-bali",
+      "title": "Exotic Bali Tropical Paradise & Nusa Penida",
+      "dest": "Bali, Indonesia",
+      "category": "INTERNATIONAL",
+      "isHoneymoon": true,
+      "duration": "6 Days / 5 Nights",
+      "price": 42999,
+      "currency": "INR",
+      "rating": "4.9",
+      "reviewCount": 145,
+      "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
+      "highlights": [
+        "Private Pool Villa",
+        "Nusa Penida Island",
+        "Ubud Jungle Swing",
+        "Tanah Lot Sunset Temple"
+      ],
+      "itinerary": [
+        {
+          "day": "Day 1",
+          "title": "Denpasar Airport Arrival & Villa Check-in",
+          "desc": "Traditional welcome with flower garland, transfer to Luxury Private Pool Villa in Seminyak."
+        },
+        {
+          "day": "Day 2",
+          "title": "Ubud Tour, Tegallalang & Bali Swing",
+          "desc": "Visit Sacred Monkey Forest, Tegallalang Rice Terrace, Aloha Bali Jungle Swing & Kintamani Volcano view."
+        },
+        {
+          "day": "Day 3",
+          "title": "Nusa Penida Island Tour by Speedboat",
+          "desc": "Fast boat to Nusa Penida, visit Kelingking T-Rex Beach, Broken Beach, Angel Billabong, Crystal Bay."
+        },
+        {
+          "day": "Day 4",
+          "title": "Water Sports at Tanjung Benoa & Tanah Lot",
+          "desc": "Parasailing, Banana Boat, Jet Ski at Benoa. Sunset view at iconic Tanah Lot Sea Temple."
+        },
+        {
+          "day": "Day 5",
+          "title": "Balinese Spa Massage & Candlelight Dinner",
+          "desc": "2-hour authentic Balinese Couples Spa Massage, Jimbaran Beach seafood romantic candlelight dinner."
+        },
+        {
+          "day": "Day 6",
+          "title": "Souvenir Shopping & Airport Departure",
+          "desc": "Visit Krishna Souvenir Market, transfer to Ngurah Rai Airport."
+        }
+      ],
+      "inclusions": [
+        "Private Pool Villa Stay",
+        "Nusa Penida Speedboat & Driver",
+        "Balinese Spa & Candlelight Dinner",
+        "Water Sports Package"
+      ],
+      "invoiceItems": [
+        {
+          "category": "HOTEL",
+          "title": "5 Nights Stay (2 Nights Pool Villa + 3 Nights Beach Resort)",
+          "sub": "Daily Floating Breakfast included",
+          "qty": 1,
+          "rate": 48000
+        },
+        {
+          "category": "ACTIVITY",
+          "title": "Nusa Penida Island Tour + Water Sports + Spa",
+          "sub": "All admission tickets & speedboats",
+          "qty": 2,
+          "rate": 12500
+        }
+      ]
+    },
+    {
+      "id": "pkg-himachal",
+      "title": "Shimla, Manali & Solang Valley Snow Tour",
+      "dest": "Himachal Pradesh, India",
+      "category": "DOMESTIC",
+      "isHoneymoon": false,
+      "duration": "6 Days / 5 Nights",
+      "price": 18999,
+      "currency": "INR",
+      "rating": "4.85",
+      "reviewCount": 160,
+      "image": "https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=800&q=80",
+      "highlights": [
+        "Solang Valley Sports",
+        "Atal Tunnel",
+        "Manali Mall Road",
+        "Shimla Kufri"
+      ],
+      "itinerary": [
+        {
+          "day": "Day 1",
+          "title": "Delhi / Chandigarh to Shimla",
+          "desc": "Pick up from Delhi/Chandigarh, scenic drive along Himalayan foothills to Shimla."
+        },
+        {
+          "day": "Day 2",
+          "title": "Shimla Kufri & Mall Road Walking Tour",
+          "desc": "Visit Kufri Green Valley, Jakhoo Temple, Christ Church, Scandal Point, and Ridge Mall Road."
+        },
+        {
+          "day": "Day 3",
+          "title": "Shimla to Manali via Kullu Valley",
+          "desc": "Drive through Mandi, Pandoh Dam, Sundernagar Lake, Kullu shawl factory & River Rafting site."
+        },
+        {
+          "day": "Day 4",
+          "title": "Solang Valley Snow Point & Atal Tunnel",
+          "desc": "Excursion to Solang Valley for Paragliding, Zorbing, Skiing. Visit historic Atal Tunnel Sissu."
+        },
+        {
+          "day": "Day 5",
+          "title": "Manali Local Sightseeing",
+          "desc": "Visit Hadimba Temple, Vashisht Hot Springs, Club House, Tibetan Monastery."
+        },
+        {
+          "day": "Day 6",
+          "title": "Manali to Delhi Departure",
+          "desc": "Overnight Volvo / Private Cab back to Delhi."
+        }
+      ],
+      "inclusions": [
+        "3★/4★ Resort Stay",
+        "Daily Breakfast & Dinner",
+        "Private Cab for transfers",
+        "Kullu Sightseeing"
+      ],
+      "invoiceItems": [
+        {
+          "category": "HOTEL",
+          "title": "5 Nights Resort Stay in Shimla & Manali",
+          "sub": "MAP Plan (Breakfast & Dinner)",
+          "qty": 1,
+          "rate": 21000
+        },
+        {
+          "category": "TRANSFER",
+          "title": "Private Sedan Cab Delhi - Shimla - Manali - Delhi",
+          "sub": "All tolls, state taxes, driver charges",
+          "qty": 1,
+          "rate": 16998
+        }
+      ]
+    }
+  ],
+  "bookings": [
+    {
+      "id": "BK-8922",
+      "packageName": "Enchanting Kashmir Paradise Tour",
+      "customerName": "Testing User",
+      "email": "",
+      "phone": "+91 99999 88888",
+      "travelDate": "2026-10-25",
+      "pax": 2,
+      "status": "Pending",
+      "amount": 49998,
+      "createdAt": "2026-09-06T06:23:59.213Z"
+    },
+    {
+      "id": "BK-9081",
+      "packageName": "Enchanting Kashmir Paradise Tour",
+      "customerName": "Rahul Sharma",
+      "email": "rahul.sharma@example.com",
+      "phone": "+91 98765 43210",
+      "travelDate": "2026-10-15",
+      "pax": 2,
+      "status": "Confirmed",
+      "amount": 49998,
+      "createdAt": "2026-09-01T10:30:00.000Z"
+    },
+    {
+      "id": "BK-9082",
+      "packageName": "Royal Dubai & Abu Dhabi Grand Getaway",
+      "customerName": "Ananya Roy",
+      "email": "ananya.roy@example.com",
+      "phone": "+91 99887 76655",
+      "travelDate": "2026-11-20",
+      "pax": 2,
+      "status": "Pending",
+      "amount": 109998,
+      "createdAt": "2026-09-04T14:15:00.000Z"
+    }
+  ],
+  "invoices": [
+    {
+      "invoiceNo": "TB-2026-8891",
+      "clientName": "Vikram Malhotra",
+      "clientPhone": "+91 98112 34567",
+      "destination": "Kashmir Paradise Special",
+      "travelDate": "12 Oct 2026",
+      "pax": 2,
+      "items": [
+        {
+          "category": "FLIGHT",
+          "title": "IndiGo Return Flight Tickets (DEL - SXR - DEL)",
+          "sub": "Economy Class | 15kg Baggage",
+          "qty": 2,
+          "rate": 7500
+        },
+        {
+          "category": "HOTEL",
+          "title": "5 Nights Stay in Srinagar Houseboat & Gulmarg Resort",
+          "sub": "MAP Plan (Breakfast & Dinner included)",
+          "qty": 1,
+          "rate": 22000
+        },
+        {
+          "category": "TRANSFER",
+          "title": "Private Sedan Cab for 6 Days Sightseeing",
+          "sub": "All toll, driver allowance included",
+          "qty": 1,
+          "rate": 12998
+        }
+      ],
+      "discount": 1000,
+      "gstPercent": 5,
+      "subtotal": 49998,
+      "tax": 2450,
+      "total": 51448,
+      "currency": "INR",
+      "status": "Paid",
+      "createdAt": "2026-09-05T09:20:00.000Z"
+    },
+    {
+      "invoiceNo": "TB-2026-8902",
+      "clientName": "Ananya Roy",
+      "clientPhone": "+91 99887 76655",
+      "destination": "Royal Dubai & Abu Dhabi Grand Getaway",
+      "travelDate": "2026-11-20",
+      "pax": 2,
+      "items": [
+        {
+          "category": "PACKAGE",
+          "title": "5 Nights 6 Days Luxury Dubai Package",
+          "sub": "5★ Hotel, Desert Safari, Burj Khalifa passes",
+          "qty": 2,
+          "rate": 54999
+        }
+      ],
+      "discount": 0,
+      "gstPercent": 5,
+      "subtotal": 109998,
+      "tax": 5500,
+      "total": 115498,
+      "currency": "INR",
+      "status": "Pending",
+      "createdAt": "2026-09-06T11:45:00.000Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev-1",
+      "name": "Priya & Amit",
+      "location": "Mumbai, India",
+      "trip": "Kashmir Honeymoon",
+      "rating": 5,
+      "comment": "TrekBest organized our dream Kashmir trip! The Srinagar houseboat and Gulmarg resort were top-notch. Seamless driver pickup and instant clear invoice transparency.",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+    },
+    {
+      "id": "rev-2",
+      "name": "David & Sarah Miller",
+      "location": "London, UK",
+      "trip": "Dubai Luxury Getaway",
+      "rating": 5,
+      "comment": "Incredible service! Our Dubai visa was processed within 24 hours, and the private desert safari was out of this world. Highly recommend TrekBest!",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+    },
+    {
+      "id": "rev-3",
+      "name": "Rohan Gupta",
+      "location": "Bengaluru, India",
+      "trip": "Ladakh 4x4 Bike Expedition",
+      "rating": 5,
+      "comment": "The best travel agency for adventure lovers. Oxygen cylinders in every vehicle and super supportive local guides in Pangong. 10/10 experience!",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+    }
+  ],
+  "contactMessages": [
+    {
+      "id": "msg-101",
+      "name": "Siddharth Mehra",
+      "email": "sid.mehra@example.com",
+      "phone": "+91 98200 12345",
+      "subject": "Custom Ladakh Bike Expedition with 8 Friends",
+      "message": "We are a group of 8 bikers looking for a customized 8-day expedition in late October with backup vehicle and oxygen.",
+      "createdAt": "2026-09-07T08:15:20.000Z"
+    },
+    {
+      "id": "msg-102",
+      "name": "Meera Krishnan",
+      "email": "meera.k@example.com",
+      "phone": "+91 94440 98765",
+      "subject": "Kerala Ayurveda & Backwaters Family Tour",
+      "message": "Interested in 5 nights package for senior parents. Need ground-floor rooms and wheelchair assistance at airport.",
+      "createdAt": "2026-09-08T03:30:10.000Z"
+    }
+  ]
+}

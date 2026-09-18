@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrekBest Travel & Tours - Invoice & Itinerary Generator</title>
+  <meta name="description" content="TrekBest Travel & Tours - Instant Travel Invoice & Itinerary Generator, client vouchers, and luxury tour bookings.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- FontAwesome v6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- AOS (Animate On Scroll) Animations -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+</head>
+<body>
+
+  <!-- App Main Sticky Header Navigation -->
+  <header class="app-header">
+    <div class="brand-section">
+      <img src="assets/trekbest-logo.png" alt="TrekBest Logo" class="brand-logo">
+      <div class="brand-title-wrap">
+        <div class="brand-name">trek<span>best</span></div>
+        <div class="brand-tagline">TRAVEL & TOURS</div>
+      </div>
+    </div>
+
+    <!-- Center Navigation Links (Customer View) -->
+    <nav class="main-nav" id="main-nav" style="display: none;">
+      <a href="#hero" class="nav-link active" data-target="hero">Home</a>
+      <a href="#packages" class="nav-link" data-target="packages">Tour Packages</a>
+      <a href="#why-us" class="nav-link" data-target="why-us">Why Us</a>
+      <a href="#quote" class="nav-link" data-target="quote">Custom Trip</a>
+      <a href="#reviews" class="nav-link" data-target="reviews">Reviews</a>
+      <a href="#contact" class="nav-link" data-target="contact">Contact</a>
+    </nav>
+
+    <!-- Header Action Bar & View Mode Switcher -->
+    <div class="header-right-actions">
+      <!-- Portal Mode Toggle -->
+      <div class="view-mode-toggle" title="Switch between Customer Portal, Agent Invoice Builder & Database Manager">
+        <button class="mode-btn" id="btn-mode-customer" data-view="customer">
+          <i class="fa-solid fa-globe"></i> <span>Customer Website</span>
+        </button>
+        <button class="mode-btn active" id="btn-mode-agent" data-view="agent">
+          <i class="fa-solid fa-file-invoice-dollar"></i> <span>Agent Invoice Engine</span>
+        </button>
+        <button class="mode-btn" id="btn-mode-database" data-view="database">
+          <i class="fa-solid fa-database"></i> <span>Database Manager</span>
+        </button>
+      </div>
+
+      <button class="mobile-nav-toggle" id="btn-mobile-nav" aria-label="Toggle Navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 1. CUSTOMER WEBSITE VIEW                   -->
+  <!-- ========================================== -->
+  <div id="customer-view" class="view-pane">
+    
+    <!-- Hero Section with Interactive Travel Search Bar -->
+    <section class="hero-section" id="hero">
+      <div class="hero-backdrop"></div>
+      <div class="hero-content">
+        <div class="hero-badge" data-aos="fade-down" data-aos-delay="100">
+          <i class="fa-solid fa-compass spin-slow"></i> Premium Handcrafted Travel Experiences
+        </div>
+        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">Explore The World's Most Breathtaking Destinations</h1>
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
+          Personalized luxury tour packages, 5-star hotel stays, seamless private cabs, and unforgettable holiday memories crafted by TrekBest travel experts.
+        </p>
+
+        <!-- Interactive Travel Search Box -->
+        <div class="search-box-container" data-aos="zoom-in" data-aos-delay="400">
+          <div class="search-field">
+            <label><i class="fa-solid fa-location-dot"></i> Destination</label>
+            <input type="text" id="hero-search-dest" placeholder="e.g. Kashmir, Ladakh, Dubai, Kerala...">
+          </div>
+          <div class="search-field">
+            <label><i class="fa-regular fa-calendar-days"></i> Travel Month</label>
+            <select id="hero-search-month">
+              <option value="">Any Month / Season</option>
+              <option value="Sep 2026">September 2026</option>
+              <option value="Oct 2026">October 2026</option>
+              <option value="Nov 2026">November 2026</option>
+              <option value="Dec 2026">December / New Year</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label><i class="fa-solid fa-sliders"></i> Tour Style</label>
+            <select id="hero-search-style">
+              <option value="ALL">All Categories</option>
+              <option value="DOMESTIC">Domestic (India)</option>
+              <option value="INTERNATIONAL">International</option>
+              <option value="HONEYMOON">Honeymoon Special</option>
+              <option value="ADVENTURE">Adventure & Trekking</option>
+            </select>
+          </div>
+          <button class="btn btn-hero-search" id="btn-hero-search">
+            <i class="fa-solid fa-magnifying-glass"></i> Search Packages
+          </button>
+        </div>
+
+        <!-- Quick Stats Banner -->
+        <div class="hero-stats" data-aos="fade-up" data-aos-delay="500">
+          <div class="stat-item">
+            <div class="stat-num">12,500+</div>
+            <div class="stat-lbl">Happy Travelers</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">4.9 ★</div>
+            <div class="stat-lbl">Customer Rating</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">45+</div>
+            <div class="stat-lbl">Curated Destinations</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">24/7</div>
+            <div class="stat-lbl">On-Trip Support</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tour Packages Section -->
+    <section class="section-container" id="packages">
+      <div class="section-header">
+        <div class="section-tag">POPULAR HOLIDAYS</div>
+        <h2 class="section-title">Trending Tour Packages & Itineraries</h2>
+        <p class="section-desc">Choose from our best-selling all-inclusive packages with Flights, Hotels, Transfers, and Sightseeing.</p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="category-pills" id="category-pills">
+        <button class="pill-btn active" data-cat="ALL"><i class="fa-solid fa-border-all"></i> All Packages</button>
+        <button class="pill-btn" data-cat="DOMESTIC"><i class="fa-solid fa-mountain-sun"></i> Domestic India</button>
+        <button class="pill-btn" data-cat="INTERNATIONAL"><i class="fa-solid fa-passport"></i> International</button>
+        <button class="pill-btn" data-cat="HONEYMOON"><i class="fa-solid fa-heart"></i> Honeymoon Specials</button>
+        <button class="pill-btn" data-cat="ADVENTURE"><i class="fa-solid fa-hiking"></i> Adventure & Treks</button>
+        <button class="pill-btn" data-cat="LUXURY"><i class="fa-solid fa-crown"></i> Luxury Resorts</button>
+      </div>
+
+      <!-- Tour Packages Grid -->
+      <div class="packages-grid" id="packages-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- Why Choose TrekBest Section -->
+    <section class="section-container why-us-section" id="why-us">
+      <div class="section-header">
+        <div class="section-tag">TREKBEST PROMISE</div>
+        <h2 class="section-title">Why Travel With TrekBest?</h2>
+        <p class="section-desc">We combine local expertise with luxury standards to give you seamless, stress-free travel memories.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h3>100% Customized Trips</h3>
+          <p>We tailor every detail—from boutique hotel choices to flight timings—to match your budget and travel pace perfectly.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Best Price Guarantee</h3>
+          <p>Direct tie-ups with top resorts and fleet operators ensure transparent pricing with zero hidden booking fees.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-headset"></i></div>
+          <h3>24/7 On-Trip Concierge</h3>
+          <p>Your dedicated travel manager is available around the clock to assist you with every request during your journey.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-star"></i></div>
+          <h3>Verified Stays & Cabs</h3>
+          <p>We personally inspect every hotel, houseboat, and cab partner to maintain strict hygiene and safety standards.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Custom Trip Quote Request Section -->
+    <section class="section-container quote-section" id="quote">
+      <div class="quote-card-wrap">
+        <div class="quote-info">
+          <div class="section-tag light">TAILOR-MADE JOURNEYS</div>
+          <h2>Want a Customized Itinerary?</h2>
+          <p>Share your travel plans with us and get an instant custom quote with day-by-day itinerary directly on WhatsApp or Email.</p>
+          
+          <ul class="quote-benefits-list">
+            <li><i class="fa-solid fa-circle-check"></i> Free Instant Itinerary & Price Calculation</li>
+            <li><i class="fa-solid fa-circle-check"></i> Custom Flight & Hotel Options</li>
+            <li><i class="fa-solid fa-circle-check"></i> Flexible Cancellation Policies</li>
+            <li><i class="fa-solid fa-circle-check"></i> Dedicated Travel Specialist</li>
+          </ul>
+
+          <div class="direct-contact-pills">
+            <a href="https://wa.me/919824999054?text=Hi%20TrekBest,%20I%20want%20to%20plan%20a%20trip!" target="_blank" class="contact-pill wa">
+              <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp: +91 98249 99054
+            </a>
+            <a href="mailto:trekbest30@gmail.com" class="contact-pill mail">
+              <i class="fa-solid fa-envelope"></i> Email: trekbest30@gmail.com
+            </a>
+          </div>
+        </div>
+
+        <div class="quote-form-wrap">
+          <form id="quote-form" class="quote-form">
+            <h3><i class="fa-solid fa-paper-plane"></i> Request Custom Quote</h3>
+            
+            <div class="form-grid">
+              <div class="col-6 form-group">
+                <label class="form-label" for="q-name">Your Full Name *</label>
+                <input type="text" id="q-name" class="form-control" placeholder="e.g. Vikram Malhotra" required>
+              </div>
+
+              <div class="col-6 form-group">
+                <label class="form-label" for="q-phone">WhatsApp / Mobile *</label>
+                <input type="tel" id="q-phone" class="form-control" placeholder="+91 98765 43210" required>
+              </div>
+
+              <div class="col-6 form-group">
+                <label class="form-label" for="q-dest">Desired Destination *</label>
+                <input type="text" id="q-dest" class="form-control" placeholder="e.g. Kashmir 6D5N" required>
+              </div>
+
+              <div class="col-6 form-group">
+                <label class="form-label" for="q-date">Travel Month / Date</label>
+                <input type="date" id="q-date" class="form-control">
+              </div>
+
+              <div class="col-6 form-group">
+                <label class="form-label" for="q-pax">Guests (Pax Count)</label>
+                <input type="text" id="q-pax" class="form-control" placeholder="2 Adults, 1 Child">
+              </div>
+
+              <div class="col-6 form-group">
+                <label class="form-label" for="q-budget">Approx. Budget (per person)</label>
+                <select id="q-budget" class="form-control">
+                  <option value="Budget (₹15,000 - ₹25,000)">₹15,000 - ₹25,000</option>
+                  <option value="Standard (₹25,000 - ₹45,000)" selected>₹25,000 - ₹45,000</option>
+                  <option value="Luxury (₹45,000 - ₹80,000)">₹45,000 - ₹80,000</option>
+                  <option value="Ultra Premium (₹80,000+)">₹80,000+</option>
+                </select>
+              </div>
+
+              <div class="col-12 form-group">
+                <label class="form-label" for="q-notes">Special Requirements / Notes</label>
+                <textarea id="q-notes" class="form-control" rows="2" placeholder="e.g. Need luxury houseboat in Srinagar, honeymoon setup, veg meals..."></textarea>
+              </div>
+
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-submit-quote">
+                  <i class="fa-brands fa-whatsapp"></i> Send Instant Enquiry via WhatsApp
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer Reviews & Testimonials Section -->
+    <section class="section-container" id="reviews">
+      <div class="section-header">
+        <div class="section-tag">REAL EXPERIENCES</div>
+        <h2 class="section-title">Traveler Stories & Testimonials</h2>
+        <p class="section-desc">Read what our verified clients have to say about their journey with TrekBest Travel & Tours.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"Our Kashmir trip organized by TrekBest was absolute perfection! The houseboat in Dal Lake and ski resort in Gulmarg were top class. Special thanks to their 24/7 team!"</p>
+          <div class="t-author">
+            <div class="t-avatar">RS</div>
+            <div>
+              <div class="t-name">Rajesh & Sneha Sharma</div>
+              <div class="t-sub">Kashmir Honeymoon Package</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"Flawless execution! Booked a 7-day family trip to Ladakh. The driver was extremely professional and the oxygen-fitted cabs gave us total peace of mind."</p>
+          <div class="t-author">
+            <div class="t-avatar">AP</div>
+            <div>
+              <div class="t-name">Ananya Patel</div>
+              <div class="t-sub">Ladakh Expedition Package</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"TrekBest provided the best price for our Dubai luxury package including Museum of the Future & Desert Safari. Quick invoice and instant vouchers!"</p>
+          <div class="t-author">
+            <div class="t-avatar">MK</div>
+            <div>
+              <div class="t-name">Manish Kapoor</div>
+              <div class="t-sub">Dubai Luxury Holiday</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer Website Footer -->
+    <footer class="app-footer" id="contact">
+      <div class="footer-grid">
+        <div class="footer-col brand-col">
+          <div class="brand-section">
+            <img src="assets/trekbest-logo.png" alt="TrekBest Logo" class="brand-logo">
+            <div class="brand-title-wrap">
+              <div class="brand-name">trek<span>best</span></div>
+              <div class="brand-tagline">TRAVEL & TOURS</div>
+            </div>
+          </div>
+          <p class="footer-desc">
+            TrekBest Travel & Tours is a premier travel management company offering customized domestic and international tour packages, flight bookings, luxury stays, and travel invoices.
+          </p>
+          <div class="footer-meta-badge">
+            <i class="fa-solid fa-certificate"></i> Government Registered & GST Compliant
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Popular Destinations</h4>
+          <ul>
+            <li><a href="#packages" class="footer-link-dest" data-filter="Kashmir">Kashmir Paradise Tour</a></li>
+            <li><a href="#packages" class="footer-link-dest" data-filter="Ladakh">Ladakh High Passes</a></li>
+            <li><a href="#packages" class="footer-link-dest" data-filter="Kerala">Kerala Backwaters</a></li>
+            <li><a href="#packages" class="footer-link-dest" data-filter="Dubai">Dubai Luxury Extravaganza</a></li>
+            <li><a href="#packages" class="footer-link-dest" data-filter="Bali">Exotic Bali Island Escape</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Head Office Contact</h4>
+          <div class="contact-item"><i class="fa-solid fa-location-dot"></i> Suite 402, Horizon Towers, MG Road, New Delhi 110001</div>
+          <div class="contact-item"><i class="fa-solid fa-phone"></i> +91 98249 99054 / +91 95104 42740</div>
+          <div class="contact-item"><i class="fa-solid fa-envelope"></i> trekbest30@gmail.com</div>
+          <div class="contact-item"><i class="fa-solid fa-id-card"></i> GSTIN: 07AAACT9012F1Z8</div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 TrekBest Travel & Tours Pvt Ltd. All Rights Reserved.</div>
+        <div class="footer-socials">
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 2. AGENT & INVOICE ENGINE VIEW             -->
+  <!-- ========================================== -->
+  <div id="agent-view" class="view-pane active">
+
+    <!-- Agent Action Header Bar -->
+    <div class="agent-sub-header">
+      <div class="agent-title-info">
+        <h2><i class="fa-solid fa-file-invoice-dollar"></i> Agent Invoice & Itinerary Builder</h2>
+        <span class="agent-badge">Internal Agent Portal</span>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-secondary" id="btn-new-invoice">
+          <i class="fa-solid fa-file-circle-plus"></i> New Invoice
+        </button>
+        <button class="btn btn-secondary" id="btn-save-invoice">
+          <i class="fa-solid fa-floppy-disk"></i> Save Invoice
+        </button>
+        <button class="btn btn-secondary" id="btn-open-saved">
+          <i class="fa-solid fa-folder-open"></i> Saved Invoices <span class="badge-counter" id="saved-count">0</span>
+        </button>
+        <button class="btn btn-email" id="btn-email-invoice">
+          <i class="fa-solid fa-envelope"></i> Email Client
+        </button>
+        <button class="btn btn-whatsapp" id="btn-whatsapp-invoice">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp Share
+        </button>
+        <button class="btn btn-primary" id="btn-print-invoice">
+          <i class="fa-solid fa-print"></i> Print / Download PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Dual Pane Layout -->
+    <div class="app-container">
+      
+      <!-- LEFT FORM PANE -->
+      <div class="form-pane">
+        
+        <!-- Package Quick Importer Banner -->
+        <div class="card import-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-bolt"></i> Quick Import Tour Package
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="col-8 form-group">
+              <select id="import-package-select" class="form-control">
+                <option value="">-- Select a Preset Tour Package to Auto-Populate --</option>
+              </select>
+            </div>
+            <div class="col-4 form-group">
+              <button class="btn btn-primary btn-block" id="btn-import-package">
+                <i class="fa-solid fa-download"></i> Auto Fill Form
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 1: Invoice Meta & Currency -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-sliders"></i> Invoice Settings & Currency
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="col-4 form-group">
+              <label class="form-label" for="inv-number">Invoice Number</label>
+              <input type="text" id="inv-number" class="form-control" value="TB-2026-001">
+            </div>
+            <div class="col-4 form-group">
+              <label class="form-label" for="inv-date">Invoice Date</label>
+              <input type="date" id="inv-date" class="form-control">
+            </div>
+            <div class="col-4 form-group">
+              <label class="form-label" for="inv-due-date">Due Date</label>
+              <input type="date" id="inv-due-date" class="form-control">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="inv-currency">Currency</label>
+              <select id="inv-currency" class="form-control">
+                <option value="INR" data-symbol="₹">INR (₹) - Indian Rupee</option>
+                <option value="USD" data-symbol="$">USD ($) - US Dollar</option>
+                <option value="EUR" data-symbol="€">EUR (€) - Euro</option>
+                <option value="AED" data-symbol="AED ">AED (د.إ) - UAE Dirham</option>
+              </select>
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="inv-status">Payment Status</label>
+              <select id="inv-status" class="form-control">
+                <option value="UNPAID">Unpaid (Full Due)</option>
+                <option value="PARTIAL" selected>Partial / Advance Paid</option>
+                <option value="PAID">Fully Paid</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Client & Trip Information -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-user-gear"></i> Client & Trip Summary
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="col-6 form-group">
+              <label class="form-label" for="client-name">Guest / Client Name</label>
+              <input type="text" id="client-name" class="form-control" placeholder="e.g. Rahul Sharma">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="client-email">Email Address</label>
+              <input type="email" id="client-email" class="form-control" placeholder="client@example.com">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="client-phone">WhatsApp / Mobile No.</label>
+              <input type="tel" id="client-phone" class="form-control" placeholder="+91 9876543210">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="client-address">Billing Address</label>
+              <input type="text" id="client-address" class="form-control" placeholder="City, State, Country">
+            </div>
+            <div class="col-8 form-group">
+              <label class="form-label" for="trip-name">Trip Destination / Package</label>
+              <input type="text" id="trip-name" class="form-control" placeholder="e.g. Enchanting Kashmir 6D5N Package">
+            </div>
+            <div class="col-4 form-group">
+              <label class="form-label" for="trip-pax">Guests (Pax Count)</label>
+              <input type="text" id="trip-pax" class="form-control" placeholder="2 Adults, 1 Child">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="trip-start-date">Travel Departure Date</label>
+              <input type="date" id="trip-start-date" class="form-control">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="trip-end-date">Travel Return Date</label>
+              <input type="date" id="trip-end-date" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Travel Line Items -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-plane-departure"></i> Travel Services & Cost Breakdown
+            </div>
+            <button class="btn btn-primary btn-sm" id="btn-add-item">
+              <i class="fa-solid fa-plus"></i> Add Service Item
+            </button>
+          </div>
+
+          <div id="items-container">
+            <!-- Dynamic Item Rows Injected by app.js -->
+          </div>
+        </div>
+
+        <!-- Card 4: Discounts, Tax & Calculations -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-calculator"></i> Discounts, GST & Financial Totals
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="col-6 form-group">
+              <label class="form-label" for="discount-type">Discount Type</label>
+              <select id="discount-type" class="form-control">
+                <option value="FIXED">Fixed Amount</option>
+                <option value="PERCENT">Percentage (%)</option>
+              </select>
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="discount-val">Discount Value</label>
+              <input type="number" id="discount-val" class="form-control" value="0" min="0" step="any">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="tax-rate">GST / Tax Rate</label>
+              <select id="tax-rate" class="form-control">
+                <option value="5" selected>5% Tour Operator GST (CGST 2.5% + SGST 2.5%)</option>
+                <option value="18">18% Standard GST (Services)</option>
+                <option value="0">0% Tax Exempt / SEZ</option>
+              </select>
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="advance-paid">Advance Paid Amount</label>
+              <input type="number" id="advance-paid" class="form-control" value="0" min="0" step="any">
+            </div>
+
+            <div class="col-12">
+              <div class="calc-summary-box">
+                <div class="calc-row">
+                  <span class="calc-label">Subtotal:</span>
+                  <span class="calc-val" id="calc-subtotal">₹0.00</span>
+                </div>
+                <div class="calc-row">
+                  <span class="calc-label">Discount Applied:</span>
+                  <span class="calc-val" id="calc-discount">- ₹0.00</span>
+                </div>
+                <div class="calc-row">
+                  <span class="calc-label">GST Tax:</span>
+                  <span class="calc-val" id="calc-tax">+ ₹0.00</span>
+                </div>
+                <div class="calc-row grand-total">
+                  <span class="calc-label">Grand Total:</span>
+                  <span class="calc-val" id="calc-grand-total">₹0.00</span>
+                </div>
+                <div class="calc-row">
+                  <span class="calc-label">Advance Received:</span>
+                  <span class="calc-val" id="calc-paid">₹0.00</span>
+                </div>
+                <div class="calc-row balance-due">
+                  <span class="calc-label">Balance Due:</span>
+                  <span class="calc-val" id="calc-balance-due">₹0.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5: Bank Account & Terms -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-building-columns"></i> TrekBest Payment Terms & Bank Details
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="col-6 form-group">
+              <label class="form-label" for="bank-name">Bank Name</label>
+              <input type="text" id="bank-name" class="form-control" value="HDFC Bank">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="bank-acc-name">Account Holder Name</label>
+              <input type="text" id="bank-acc-name" class="form-control" value="TrekBest Travel & Tours Pvt Ltd">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="bank-acc-num">Account Number</label>
+              <input type="text" id="bank-acc-num" class="form-control" value="50200084729104">
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-label" for="bank-ifsc">IFSC / SWIFT Code</label>
+              <input type="text" id="bank-ifsc" class="form-control" value="HDFC0001248">
+            </div>
+            <div class="col-12 form-group">
+              <label class="form-label" for="bank-upi">UPI ID / Payment Link</label>
+              <input type="text" id="bank-upi" class="form-control" value="trekbest@hdfcbank">
+            </div>
+            <div class="col-12 form-group">
+              <label class="form-label" for="terms-text">Terms & Cancellation Policy</label>
+              <textarea id="terms-text" class="form-control" rows="3">1. 50% advance payment required to confirm booking. Balance due 7 days prior to departure.
+2. Standard cancellation policy applies as per TrekBest Tour Regulations.
+3. Airfare and Visa fees are non-refundable once issued.</textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT LIVE PREVIEW PANE -->
+      <div class="preview-pane">
+        
+        <!-- Toolbar -->
+        <div class="preview-toolbar">
+          <div class="preview-title">
+            <i class="fa-solid fa-eye"></i> Real-Time A4 Document Preview
+          </div>
+          <div class="template-picker">
+            <button class="template-btn active" data-theme="theme-executive">Executive</button>
+            <button class="template-btn" data-theme="theme-elegant">Elegant Luxury</button>
+            <button class="template-btn" data-theme="theme-compact">Compact Clean</button>
+          </div>
+        </div>
+
+        <!-- Live Printable Sheet -->
+        <div class="a4-paper theme-executive" id="invoice-preview">
+          
+          <!-- Header -->
+          <div>
+            <div class="inv-header">
+              <div>
+                <img src="assets/trekbest-logo.png" alt="TrekBest Logo" class="inv-company-logo">
+              </div>
+              <div class="inv-company-details">
+                <div class="inv-company-name">trek<span>best</span></div>
+                <div><strong>TRAVEL & TOURS</strong></div>
+                <div>Suite 402, Horizon Towers, MG Road</div>
+                <div>GSTIN: 07AAACT9012F1Z8</div>
+                <div>Phone: +91 98249 99054 / +91 95104 42740 | trekbest30@gmail.com</div>
+                <div>www.trekbest.com</div>
+              </div>
+            </div>
+
+            <!-- Invoice & Client Details Grid -->
+            <div class="inv-meta-grid">
+              <div class="inv-box">
+                <div class="inv-box-title">Billed To (Guest Details)</div>
+                <div class="inv-party-name" id="prev-client-name">Guest Name</div>
+                <div class="inv-party-info" id="prev-client-info">
+                  Email: client@example.com<br>
+                  Phone: +91 98765 43210<br>
+                  Address: New Delhi, India
+                </div>
+              </div>
+
+              <div class="inv-box">
+                <div class="inv-box-title">Invoice Information</div>
+                <table class="inv-details-table">
+                  <tr>
+                    <td class="lbl">Invoice No:</td>
+                    <td class="val" id="prev-inv-num">TB-2026-001</td>
+                  </tr>
+                  <tr>
+                    <td class="lbl">Date:</td>
+                    <td class="val" id="prev-inv-date">04 Sep 2026</td>
+                  </tr>
+                  <tr>
+                    <td class="lbl">Due Date:</td>
+                    <td class="val" id="prev-due-date">10 Sep 2026</td>
+                  </tr>
+                  <tr>
+                    <td class="lbl">Status:</td>
+                    <td class="val">
+                      <span class="status-badge status-partial" id="prev-status-badge">PARTIAL</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+            <!-- Trip Summary Banner -->
+            <div class="trip-summary-banner" id="prev-trip-banner">
+              <div class="trip-dest">
+                <i class="fa-solid fa-map-location-dot"></i> <span id="prev-trip-name">Trip Destination Name</span>
+              </div>
+              <div class="trip-pills">
+                <div class="trip-pill">
+                  <i class="fa-regular fa-calendar-days"></i> <span id="prev-trip-dates">Dates: N/A</span>
+                </div>
+                <div class="trip-pill">
+                  <i class="fa-solid fa-users"></i> <span id="prev-trip-pax">Pax: N/A</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Items Table -->
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th style="width: 5%;">#</th>
+                  <th style="width: 45%;">Service & Description</th>
+                  <th class="text-center" style="width: 15%;">Qty / Pax</th>
+                  <th class="text-right" style="width: 17%;">Price / Rate</th>
+                  <th class="text-right" style="width: 18%;">Line Total</th>
+                </tr>
+              </thead>
+              <tbody id="prev-items-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Calculations & Bank Details -->
+          <div>
+            <div class="inv-calc-section">
+              
+              <!-- Bank Details Box -->
+              <div class="inv-bank-box">
+                <div class="inv-bank-title">
+                  <i class="fa-solid fa-building-columns"></i> Bank Transfer & Payment Info
+                </div>
+                <div class="bank-line">
+                  <span>Account Name:</span> <strong id="prev-bank-acc-name">TrekBest Travel & Tours</strong>
+                </div>
+                <div class="bank-line">
+                  <span>Bank:</span> <strong id="prev-bank-name">HDFC Bank</strong>
+                </div>
+                <div class="bank-line">
+                  <span>Account No:</span> <strong id="prev-bank-acc-num">50200084729104</strong>
+                </div>
+                <div class="bank-line">
+                  <span>IFSC Code:</span> <strong id="prev-bank-ifsc">HDFC0001248</strong>
+                </div>
+                <div class="bank-line">
+                  <span>UPI ID:</span> <strong id="prev-bank-upi">trekbest@hdfcbank</strong>
+                </div>
+              </div>
+
+              <!-- Financial Totals -->
+              <table class="inv-totals-table">
+                <tr>
+                  <td class="lbl">Subtotal:</td>
+                  <td class="val" id="prev-subtotal">₹0.00</td>
+                </tr>
+                <tr id="prev-discount-row">
+                  <td class="lbl">Discount:</td>
+                  <td class="val" id="prev-discount">- ₹0.00</td>
+                </tr>
+                <tr id="prev-tax-row">
+                  <td class="lbl" id="prev-tax-label">GST Tax (5%):</td>
+                  <td class="val" id="prev-tax">+ ₹0.00</td>
+                </tr>
+                <tr class="total-row">
+                  <td class="lbl">Grand Total:</td>
+                  <td class="val" id="prev-grand-total">₹0.00</td>
+                </tr>
+                <tr>
+                  <td class="lbl">Advance Paid:</td>
+                  <td class="val" id="prev-paid">₹0.00</td>
+                </tr>
+                <tr class="due-row" id="prev-due-row">
+                  <td class="lbl">Balance Due:</td>
+                  <td class="val" id="prev-balance-due">₹0.00</td>
+                </tr>
+              </table>
+
+            </div>
+
+            <!-- Footer & Signatory -->
+            <div class="inv-footer">
+              <div class="inv-terms-notes">
+                <div class="inv-terms-title">Terms & Conditions</div>
+                <div id="prev-terms">1. 50% advance payment required to confirm booking.<br>2. Cancellation policy applies.</div>
+              </div>
+
+              <div class="inv-signature-bar">
+                <div style="font-size: 0.76rem; color: #6B7280;">
+                  Thank you for choosing TrekBest Travel & Tours!<br>
+                  Wish you a wonderful journey!
+                </div>
+                <div class="inv-sign-box">
+                  <div class="inv-sign-line">Authorised Signatory</div>
+                  <div style="font-size: 0.7rem; color: #9CA3AF; margin-top: 2px;">TrekBest Travel & Tours</div>
+                </div>
+              </div>
+
+              <div class="inv-bottom-brand-bar">
+                This is a computer generated travel invoice & voucher. Generated by TrekBest Invoice Portal.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. DATABASE MANAGER VIEW                   -->
+  <!-- ========================================== -->
+  <div id="database-view" class="view-pane">
+    <div class="db-manager-container">
+
+      <!-- Database Top Bar & Stats Cards -->
+      <div class="db-header-row">
+        <div class="db-title-block">
+          <div class="db-badge"><i class="fa-solid fa-server"></i> Live Central Database</div>
+          <h2 class="db-main-title">Travel Operations Database Tables</h2>
+          <p class="db-subtitle">Live real-time records synchronized directly with <code>database.json</code> REST APIs. View, search, filter, sort, update status, and export.</p>
+        </div>
+        <div class="db-actions-block">
+          <button class="btn btn-secondary" id="btn-db-refresh" title="Reload records from server">
+            <i class="fa-solid fa-arrows-rotate" id="db-refresh-icon"></i> <span>Refresh Data</span>
+          </button>
+          <div class="db-dropdown">
+            <button class="btn btn-secondary" id="btn-db-export-toggle">
+              <i class="fa-solid fa-file-export"></i> <span>Export</span> <i class="fa-solid fa-chevron-down text-xs"></i>
+            </button>
+            <div class="db-dropdown-menu" id="db-export-menu">
+              <button type="button" class="db-dropdown-item" id="btn-export-csv"><i class="fa-solid fa-file-csv"></i> Export Current View (CSV)</button>
+              <button type="button" class="db-dropdown-item" id="btn-export-json"><i class="fa-solid fa-file-code"></i> Export Full Table (JSON)</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-db-add-record">
+            <i class="fa-solid fa-plus"></i> <span>Add New Record</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="db-stats-grid">
+        <div class="db-stat-card" data-stat-target="bookings">
+          <div class="db-stat-icon icon-orange"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="db-stat-info">
+            <span class="db-stat-label">Total Bookings</span>
+            <span class="db-stat-val" id="db-stat-bookings">0</span>
+          </div>
+          <span class="db-stat-sub" id="db-stat-pending-bookings">0 Pending</span>
+        </div>
+
+        <div class="db-stat-card" data-stat-target="invoices">
+          <div class="db-stat-icon icon-teal"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+          <div class="db-stat-info">
+            <span class="db-stat-label">Total Invoices</span>
+            <span class="db-stat-val" id="db-stat-invoices">0</span>
+          </div>
+          <span class="db-stat-sub text-success" id="db-stat-revenue">₹0 Revenue</span>
+        </div>
+
+        <div class="db-stat-card" data-stat-target="packages">
+          <div class="db-stat-icon icon-moss"><i class="fa-solid fa-map-location-dot"></i></div>
+          <div class="db-stat-info">
+            <span class="db-stat-label">Tour Packages</span>
+            <span class="db-stat-val" id="db-stat-packages">0</span>
+          </div>
+          <span class="db-stat-sub">Active in Catalog</span>
+        </div>
+
+        <div class="db-stat-card" data-stat-target="messages">
+          <div class="db-stat-icon icon-purple"><i class="fa-solid fa-envelope-open-text"></i></div>
+          <div class="db-stat-info">
+            <span class="db-stat-label">Client Inquiries</span>
+            <span class="db-stat-val" id="db-stat-messages">0</span>
+          </div>
+          <span class="db-stat-sub">Recent Web Leads</span>
+        </div>
+      </div>
+
+      <!-- Table Card Container -->
+      <div class="db-card">
+        
+        <!-- Table Navigation Tabs & Search Controls -->
+        <div class="db-table-header">
+          <div class="db-table-tabs">
+            <button class="db-tab-btn active" data-table="bookings" id="tab-btn-bookings">
+              <i class="fa-solid fa-calendar-check"></i> Bookings <span class="tab-badge" id="tab-count-bookings">0</span>
+            </button>
+            <button class="db-tab-btn" data-table="invoices" id="tab-btn-invoices">
+              <i class="fa-solid fa-file-invoice-dollar"></i> Invoices <span class="tab-badge" id="tab-count-invoices">0</span>
+            </button>
+            <button class="db-tab-btn" data-table="packages" id="tab-btn-packages">
+              <i class="fa-solid fa-map-location-dot"></i> Tour Packages <span class="tab-badge" id="tab-count-packages">0</span>
+            </button>
+            <button class="db-tab-btn" data-table="messages" id="tab-btn-messages">
+              <i class="fa-solid fa-envelope"></i> Inquiries <span class="tab-badge" id="tab-count-messages">0</span>
+            </button>
+          </div>
+
+          <div class="db-controls-row">
+            <div class="db-search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="db-search-input" placeholder="Search by name, ID, destination, email, phone...">
+              <button class="db-search-clear" id="db-search-clear" title="Clear Search"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="db-filter-select-wrapper">
+              <label for="db-status-filter"><i class="fa-solid fa-filter"></i></label>
+              <select id="db-status-filter" class="form-control db-filter-select">
+                <option value="ALL">All Statuses</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Pending">Pending</option>
+                <option value="Paid">Paid</option>
+                <option value="Draft">Draft</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div class="db-filter-select-wrapper">
+              <label for="db-sort-filter"><i class="fa-solid fa-arrow-down-wide-short"></i></label>
+              <select id="db-sort-filter" class="form-control db-filter-select">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name_asc">Name (A-Z)</option>
+                <option value="amount_desc">Amount (High-Low)</option>
+              </select>
+            </div>
+
+            <div class="db-rows-select-wrapper">
+              <select id="db-rows-per-page" class="form-control db-filter-select" title="Rows per page">
+                <option value="10">10 / page</option>
+                <option value="25">25 / page</option>
+                <option value="50">50 / page</option>
+                <option value="ALL">All rows</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Viewport -->
+        <div class="db-table-responsive" id="db-table-container">
+          <!-- Dynamically injected table based on selected tab -->
+        </div>
+
+        <!-- Table Footer / Pagination -->
+        <div class="db-table-footer">
+          <div class="db-footer-info" id="db-pagination-info">
+            Showing 0 of 0 entries
+          </div>
+          <div class="db-pagination-controls" id="db-pagination-controls">
+            <button class="btn btn-secondary btn-sm" id="db-prev-page" disabled><i class="fa-solid fa-chevron-left"></i> Previous</button>
+            <span class="db-page-indicator" id="db-page-indicator">Page 1 of 1</span>
+            <button class="btn btn-secondary btn-sm" id="db-next-page" disabled>Next <i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Database Record Inspector Modal -->
+  <div class="modal-overlay" id="db-details-modal">
+    <div class="modal-card db-modal-card">
+      <button class="modal-close" id="btn-close-db-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="db-modal-header">
+        <div class="db-modal-badge" id="db-modal-badge"><i class="fa-solid fa-file-lines"></i> Record Details</div>
+        <h3 class="db-modal-title" id="db-modal-title">Record Details</h3>
+        <p class="db-modal-subtitle" id="db-modal-subtitle">Full details from live database</p>
+      </div>
+      <div class="db-modal-body" id="db-modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="db-modal-footer">
+        <button class="btn btn-secondary" id="btn-copy-record-json"><i class="fa-solid fa-copy"></i> Copy JSON</button>
+        <button class="btn btn-primary" id="btn-close-db-modal-footer">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Record Modal -->
+  <div class="modal-overlay" id="db-add-modal">
+    <div class="modal-card db-modal-card">
+      <button class="modal-close" id="btn-close-add-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="db-modal-header">
+        <div class="db-modal-badge"><i class="fa-solid fa-plus"></i> New Entry</div>
+        <h3 class="db-modal-title">Create New Database Record</h3>
+        <p class="db-modal-subtitle">Add a booking or inquiry directly into the central database</p>
+      </div>
+      <form id="db-add-form" class="db-add-form">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Record Type</label>
+          <select id="db-add-type" class="form-control">
+            <option value="booking">New Booking</option>
+            <option value="inquiry">New Contact Inquiry</option>
+          </select>
+        </div>
+
+        <div id="db-add-booking-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Customer Name *</label>
+              <input type="text" id="add-b-name" class="form-control" placeholder="e.g. Ramesh Patel">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number *</label>
+              <input type="tel" id="add-b-phone" class="form-control" placeholder="+91 98765 43210">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" id="add-b-email" class="form-control" placeholder="client@example.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Package / Trip Name</label>
+              <input type="text" id="add-b-package" class="form-control" placeholder="e.g. Kashmir Paradise Tour">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Travel Date *</label>
+              <input type="date" id="add-b-date" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Passengers (Pax)</label>
+              <input type="number" id="add-b-pax" class="form-control" value="2" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Total Amount (₹)</label>
+              <input type="number" id="add-b-amount" class="form-control" value="25000" min="0">
+            </div>
+          </div>
+        </div>
+
+        <div id="db-add-inquiry-fields" style="display: none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Contact Name *</label>
+              <input type="text" id="add-m-name" class="form-control" placeholder="e.g. Priya Sharma">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" id="add-m-email" class="form-control" placeholder="priya@example.com">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="tel" id="add-m-phone" class="form-control" placeholder="+91 98765 11223">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subject</label>
+              <input type="text" id="add-m-subject" class="form-control" placeholder="e.g. Honeymoon Package Inquiry">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message / Details</label>
+            <textarea id="add-m-message" class="form-control" rows="3" placeholder="Inquiry notes..."></textarea>
+          </div>
+        </div>
+
+        <div class="db-modal-footer" style="padding-top: 20px; border-top: 1px solid var(--tb-card-border); margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-add-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-add-record"><i class="fa-solid fa-check"></i> Save Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Package Itinerary Detail Modal -->
+  <div class="modal-overlay" id="package-modal">
+    <div class="modal-card">
+      <button class="modal-close" id="btn-close-pkg-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div id="pkg-modal-body">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved Invoices Drawer Modal -->
+  <div class="drawer-overlay" id="saved-drawer">
+    <div class="drawer-content">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <i class="fa-solid fa-folder-open"></i> Saved Invoices
+        </div>
+        <button class="btn-close-drawer" id="btn-close-drawer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <input type="text" id="search-saved" class="form-control" placeholder="Search by Client Name or Invoice #...">
+      </div>
+
+      <div class="saved-invoices-list" id="saved-invoices-list">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- AOS (Animate On Scroll) JS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
