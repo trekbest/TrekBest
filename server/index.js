@@ -19,25 +19,38 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 
 // API Health Check
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     status: 'ok',
-    message: 'TrekBest SQLite + Node.js API Server is active!',
+    message: 'TrekBest API Server is active!',
     timestamp: new Date().toISOString()
   });
 });
 
-// Register API Routes
-app.use('/api/packages', require('./routes/packageRoutes'));
-app.use('/api/bookings', require('./routes/bookingRoutes'));
-app.use('/api/invoices', require('./routes/invoiceRoutes'));
-app.use('/api/stats', require('./routes/statsRoutes'));
-app.use('/api/contact', require('./routes/contactRoutes'));
-app.use('/api/reviews', require('./routes/reviewRoutes'));
+// Import route handlers
+const packageRoutes = require('./routes/packageRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
+const invoiceRoutes = require('./routes/invoiceRoutes');
+const statsRoutes = require('./routes/statsRoutes');
+const contactRoutes = require('./routes/contactRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+
+// Mount routes on BOTH '/api/...' and root so Vercel rewrites work seamlessly
+const mountRoutes = (prefix = '') => {
+  app.use(`${prefix}/packages`, packageRoutes);
+  app.use(`${prefix}/bookings`, bookingRoutes);
+  app.use(`${prefix}/invoices`, invoiceRoutes);
+  app.use(`${prefix}/stats`, statsRoutes);
+  app.use(`${prefix}/contact`, contactRoutes);
+  app.use(`${prefix}/reviews`, reviewRoutes);
+};
+
+mountRoutes('/api');
+mountRoutes('');
 
 // SMTP Email Health & Verification Route
 const { testSmtpConnection, isSmtpConfigured } = require('./config/email');
-app.get('/api/email/status', async (req, res) => {
+app.get(['/api/email/status', '/email/status'], async (req, res) => {
   const configured = isSmtpConfigured();
   if (!configured) {
     return res.json({
@@ -49,15 +62,33 @@ app.get('/api/email/status', async (req, res) => {
   res.json({ configured: true, ...result });
 });
 
+// Any unmatched API route returns JSON 404, never HTML
+app.use('/api', (req, res) => {
+  res.status(404).json({ success: false, error: `API route not found: ${req.method} ${req.originalUrl || req.url}` });
+});
+
 // Serve React production build if available
 const clientDist = path.join(__dirname, '..', 'client', 'dist');
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
-  // Catch-all route for SPA in Express 5
+  // Catch-all route for SPA in Express
   app.use((req, res) => {
+    // If request was an API call that somehow reached here, return JSON!
+    if (req.url.startsWith('/api') || req.path.startsWith('/api') || req.originalUrl?.startsWith('/api')) {
+      return res.status(404).json({ success: false, error: `API endpoint not found: ${req.method} ${req.originalUrl || req.url}` });
+    }
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 }
+
+// Global Error Handler for API errors
+app.use((err, req, res, next) => {
+  console.error('Express Error:', err);
+  if (req.url.startsWith('/api') || req.originalUrl?.startsWith('/api')) {
+    return res.status(500).json({ success: false, error: err.message || 'Internal Server Error' });
+  }
+  next(err);
+});
 
 // Start Server
 if (require.main === module) {
