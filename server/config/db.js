@@ -49,15 +49,28 @@ function convertPlaceholders(sql) {
 let dbInterface;
 
 if (isPostgres) {
-  const pool = new Pool({
-    host: process.env.PG_HOST || 'localhost',
-    port: Number(process.env.PG_PORT) || 5432,
-    user: process.env.PG_USER || 'postgres',
-    password: process.env.PG_PASSWORD,
-    database: process.env.PG_DATABASE || 'trekbest'
-  });
+  const isCloudOrSsl = process.env.PG_SSL === 'true' || 
+    (process.env.PG_HOST && process.env.PG_HOST !== 'localhost') ||
+    Boolean(process.env.DATABASE_URL);
 
-  console.log(`🗄️ Database: PostgreSQL (${process.env.PG_HOST || 'localhost'}:${process.env.PG_PORT || 5432}/${process.env.PG_DATABASE || 'trekbest'})`);
+  const poolConfig = process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: isCloudOrSsl ? { rejectUnauthorized: false } : false
+      }
+    : {
+        host: process.env.PG_HOST || 'localhost',
+        port: Number(process.env.PG_PORT) || 5432,
+        user: process.env.PG_USER || 'postgres',
+        password: process.env.PG_PASSWORD,
+        database: process.env.PG_DATABASE || 'trekbest',
+        ssl: isCloudOrSsl ? { rejectUnauthorized: false } : false
+      };
+
+  const pool = new Pool(poolConfig);
+
+  const targetDisplay = process.env.DATABASE_URL ? 'Cloud DATABASE_URL' : `${process.env.PG_HOST || 'localhost'}:${process.env.PG_PORT || 5432}/${process.env.PG_DATABASE || 'trekbest'}`;
+  console.log(`🗄️ Database: PostgreSQL (${targetDisplay})`);
 
   dbInterface = {
     isPostgres: true,

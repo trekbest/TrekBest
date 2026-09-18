@@ -13,38 +13,48 @@ const pgConfig = {
 };
 
 async function initPostgres() {
-  console.log('🚀 Step 1: Connecting to PostgreSQL server...');
-  
-  // 1. Connect to default 'postgres' database to check/create 'trekbest' database
-  const adminClient = new Client({
-    ...pgConfig,
-    database: 'postgres'
-  });
+  let pool;
 
-  await adminClient.connect();
-  console.log('✅ Connected to PostgreSQL server.');
-
-  const dbName = process.env.PG_DATABASE || 'trekbest';
-  const checkDb = await adminClient.query(
-    `SELECT 1 FROM pg_database WHERE datname = $1`,
-    [dbName]
-  );
-
-  if (checkDb.rows.length === 0) {
-    console.log(`📦 Creating database "${dbName}"...`);
-    await adminClient.query(`CREATE DATABASE "${dbName}"`);
-    console.log(`✅ Database "${dbName}" created successfully!`);
+  if (process.env.DATABASE_URL) {
+    console.log('🚀 Connecting directly to PostgreSQL via DATABASE_URL...');
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
+    });
   } else {
-    console.log(`ℹ️ Database "${dbName}" already exists.`);
-  }
-  await adminClient.end();
+    console.log('🚀 Step 1: Connecting to PostgreSQL server...');
+    
+    // 1. Connect to default 'postgres' database to check/create target database
+    const adminClient = new Client({
+      ...pgConfig,
+      database: 'postgres'
+    });
 
-  // 2. Connect to the target 'trekbest' database
-  console.log(`🚀 Step 2: Connecting to "${dbName}" database...`);
-  const pool = new Pool({
-    ...pgConfig,
-    database: dbName
-  });
+    await adminClient.connect();
+    console.log('✅ Connected to PostgreSQL server.');
+
+    const dbName = process.env.PG_DATABASE || 'trekbest';
+    const checkDb = await adminClient.query(
+      `SELECT 1 FROM pg_database WHERE datname = $1`,
+      [dbName]
+    );
+
+    if (checkDb.rows.length === 0) {
+      console.log(`📦 Creating database "${dbName}"...`);
+      await adminClient.query(`CREATE DATABASE "${dbName}"`);
+      console.log(`✅ Database "${dbName}" created successfully!`);
+    } else {
+      console.log(`ℹ️ Database "${dbName}" already exists.`);
+    }
+    await adminClient.end();
+
+    // 2. Connect to the target database
+    console.log(`🚀 Step 2: Connecting to "${dbName}" database...`);
+    pool = new Pool({
+      ...pgConfig,
+      database: dbName
+    });
+  }
 
   const client = await pool.connect();
   console.log(`✅ Connected to "${dbName}".`);
