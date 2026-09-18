@@ -18,6 +18,20 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static assets (logos, images, etc.)
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 
+// Vercel Serverless URL Normalizer: Restore original requested path if rewritten
+app.use((req, res, next) => {
+  if (req.query && req.query.url) {
+    req.url = req.query.url;
+  } else if (req.headers['x-matched-path']) {
+    req.url = req.headers['x-matched-path'];
+  } else if (req.headers['x-forwarded-uri']) {
+    req.url = req.headers['x-forwarded-uri'];
+  } else if (req.url.startsWith('/api/index.js')) {
+    req.url = req.url.replace('/api/index.js', '') || '/';
+  }
+  next();
+});
+
 // API Health Check
 app.get(['/api/health', '/health'], (req, res) => {
   res.json({
