@@ -309,43 +309,53 @@ if (isPostgres && (!isVercel || hasCloudDb)) {
   dbInterface = createFallbackInterface();
 } else {
   // SQLite Fallback for local dev
-  const { DatabaseSync } = require('node:sqlite');
-  const DB_PATH = process.env.DB_PATH ? path.resolve(process.env.DB_PATH) : path.join(__dirname, '..', '..', 'data', 'trekbest.db');
-  const dataDir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  let DatabaseSync;
+  try {
+    DatabaseSync = require('node:sqlite').DatabaseSync;
+  } catch (e) {
+    DatabaseSync = null;
   }
 
-  const sqliteDb = new DatabaseSync(DB_PATH);
-  sqliteDb.exec('PRAGMA journal_mode = WAL;');
-
-  console.log(`🗄️ Database: SQLite (${DB_PATH})`);
-
-  dbInterface = {
-    isPostgres: false,
-    sqliteDb,
-    prepare: (sql) => {
-      const stmt = sqliteDb.prepare(sql);
-      return {
-        all: async (...params) => {
-          const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
-          return stmt.all(...flatParams).map(normalizeRow);
-        },
-        get: async (...params) => {
-          const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
-          const row = stmt.get(...flatParams);
-          return row ? normalizeRow(row) : null;
-        },
-        run: async (...params) => {
-          const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
-          return stmt.run(...flatParams);
-        }
-      };
-    },
-    exec: async (sql) => {
-      return sqliteDb.exec(sql);
+  if (!DatabaseSync) {
+    dbInterface = createFallbackInterface();
+  } else {
+    const DB_PATH = process.env.DB_PATH ? path.resolve(process.env.DB_PATH) : path.join(__dirname, '..', '..', 'data', 'trekbest.db');
+    const dataDir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
     }
-  };
+
+    const sqliteDb = new DatabaseSync(DB_PATH);
+    sqliteDb.exec('PRAGMA journal_mode = WAL;');
+
+    console.log(`🗄️ Database: SQLite (${DB_PATH})`);
+
+    dbInterface = {
+      isPostgres: false,
+      sqliteDb,
+      prepare: (sql) => {
+        const stmt = sqliteDb.prepare(sql);
+        return {
+          all: async (...params) => {
+            const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
+            return stmt.all(...flatParams).map(normalizeRow);
+          },
+          get: async (...params) => {
+            const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
+            const row = stmt.get(...flatParams);
+            return row ? normalizeRow(row) : null;
+          },
+          run: async (...params) => {
+            const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
+            return stmt.run(...flatParams);
+          }
+        };
+      },
+      exec: async (sql) => {
+        return sqliteDb.exec(sql);
+      }
+    };
+  }
 }
 
 module.exports = dbInterface;
