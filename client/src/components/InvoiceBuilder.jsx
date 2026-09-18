@@ -14,26 +14,26 @@ import {
 } from 'lucide-react';
 
 const INITIAL_FORM_STATE = {
-  clientName: 'Rahul & Priya Sharma',
-  clientEmail: 'rahul.sharma@example.com',
-  clientPhone: '+91 98112 34567',
-  clientAddress: 'Andheri West, Mumbai, Maharashtra 400053',
-  destination: 'Enchanting Kashmir Paradise Tour',
-  travelDate: '15 Oct 2026',
-  pax: 2,
-  discount: 1000,
+  clientName: '',
+  clientEmail: '',
+  clientPhone: '',
+  clientAddress: '',
+  destination: '',
+  travelDate: '',
+  pax: 1,
+  discount: 0,
   gstPercent: 5,
   status: 'Paid',
-  notes: 'Includes all luxury houseboat stays, private Shikara rides, Gondola Phase 1 & 2 tickets, airport transfers, and MAP meal plan.'
+  notes: ''
 };
 
 const INITIAL_ITEMS_STATE = [
   {
     id: 1,
-    title: '6 Days / 5 Nights Kashmir Deluxe Tour Package',
-    sub: 'Luxury Houseboat, Gulmarg Resort, Pahalgam Pine Hotel (MAP Plan)',
+    title: '',
+    sub: '',
     qty: 1,
-    rate: 45000
+    rate: ''
   }
 ];
 
@@ -194,7 +194,7 @@ export default function InvoiceBuilder({
         title: '',
         sub: '',
         qty: 1,
-        rate: 0
+        rate: ''
       }
     ]);
     setActiveItemId(newId);
@@ -221,26 +221,14 @@ export default function InvoiceBuilder({
   const resetForm = () => {
     if (confirm('Clear form and reset to a fresh blank invoice?')) {
       const newId = Date.now();
-      setFormData({
-        clientName: '',
-        clientEmail: '',
-        clientPhone: '',
-        clientAddress: '',
-        destination: '',
-        travelDate: '',
-        pax: 1,
-        discount: 0,
-        gstPercent: 5,
-        status: 'Paid',
-        notes: 'Thank you for choosing TrekBest. Have a wonderful trip!'
-      });
+      setFormData(INITIAL_FORM_STATE);
       setItems([
         {
           id: newId,
-          title: 'Custom Travel Package',
+          title: '',
           sub: '',
           qty: 1,
-          rate: 0
+          rate: ''
         }
       ]);
       setActiveItemId(newId);
@@ -866,7 +854,6 @@ export default function InvoiceBuilder({
                       />
                       <input
                         type="text"
-                        placeholder="Details / Inclusions (e.g. Hotel, Meals, Sightseeing, Transfers)"
                         value={item.sub}
                         onFocus={() => setActiveItemId(item.id)}
                         onChange={e => updateItem(item.id, 'sub', e.target.value)}

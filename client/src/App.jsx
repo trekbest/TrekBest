@@ -84,6 +84,9 @@ export default function App() {
     }
   };
 
+  // Key to force fresh clean form when creating new invoice
+  const [builderKey, setBuilderKey] = useState(0);
+
   // Action: Start Editing
   const handleEditInvoice = (invoice) => {
     setEditingInvoice(invoice);
@@ -93,6 +96,7 @@ export default function App() {
   // Action: Start Fresh New Invoice
   const handleNewInvoice = () => {
     setEditingInvoice(null);
+    setBuilderKey(prev => prev + 1);
     setCurrentView('builder');
   };
 
@@ -108,8 +112,9 @@ export default function App() {
       <Navbar
         currentView={currentView}
         onViewChange={(view) => {
-          if (view === 'builder' && editingInvoice) {
-            setEditingInvoice(null);
+          if (view === 'builder') {
+            if (editingInvoice) setEditingInvoice(null);
+            setBuilderKey(prev => prev + 1);
           }
           setCurrentView(view);
         }}
@@ -134,6 +139,7 @@ export default function App() {
 
         {currentView === 'builder' && (
           <InvoiceBuilder
+            key={editingInvoice ? `edit-${editingInvoice.id}` : `new-${builderKey}`}
             editingInvoice={editingInvoice}
             onSaveInvoice={handleSaveInvoice}
             onUpdateInvoice={handleUpdateInvoice}
