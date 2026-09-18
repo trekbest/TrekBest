@@ -2,6 +2,18 @@ import React, { useState } from 'react';
 import { X, Printer, Download, CheckCircle2, Mail, Loader2 } from 'lucide-react';
 import { api } from '../services/api';
 
+function formatTravelDate(dateStr) {
+  if (!dateStr || dateStr === 'Flexible') return dateStr || 'Flexible';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [y, m, d] = dateStr.split('-');
+    const dObj = new Date(Number(y), Number(m) - 1, Number(d));
+    if (!isNaN(dObj.getTime())) {
+      return dObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+  }
+  return dateStr;
+}
+
 export default function InvoicePrintModal({ invoice, onClose }) {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null);
@@ -225,7 +237,7 @@ export default function InvoicePrintModal({ invoice, onClose }) {
                 ITINERARY DETAILS
               </div>
               <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>{invoice.destination || 'Special Tour'}</div>
-              <div style={{ color: '#444', marginTop: 2 }}>Travel Date: <strong>{invoice.travelDate || 'Flexible'}</strong></div>
+              <div style={{ color: '#444', marginTop: 2 }}>Travel Date: <strong>{formatTravelDate(invoice.travelDate)}</strong></div>
               <div style={{ color: '#444' }}>Number of Guests: <strong>{invoice.pax || 2} Pax</strong></div>
               <div style={{ color: '#444' }}>Currency: <strong>{invoice.currency || 'INR'}</strong></div>
             </div>

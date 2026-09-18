@@ -10,7 +10,8 @@ import {
   Sparkles,
   ArrowLeft,
   X,
-  PlusCircle
+  PlusCircle,
+  Calendar
 } from 'lucide-react';
 
 const INITIAL_FORM_STATE = {
@@ -151,13 +152,21 @@ export default function InvoiceBuilder({
   // If editing an existing invoice
   useEffect(() => {
     if (editingInvoice) {
+      let initialTravelDate = editingInvoice.travelDate || '';
+      if (initialTravelDate && !/^\d{4}-\d{2}-\d{2}$/.test(initialTravelDate)) {
+        const parsed = new Date(initialTravelDate);
+        if (!isNaN(parsed.getTime())) {
+          initialTravelDate = parsed.toISOString().split('T')[0];
+        }
+      }
+
       setFormData({
         clientName: editingInvoice.clientName || '',
         clientEmail: editingInvoice.clientEmail || '',
         clientPhone: editingInvoice.clientPhone || '',
         clientAddress: editingInvoice.clientAddress || '',
         destination: editingInvoice.destination || '',
-        travelDate: editingInvoice.travelDate || '',
+        travelDate: initialTravelDate,
         pax: editingInvoice.pax || 1,
         discount: editingInvoice.discount || 0,
         gstPercent: editingInvoice.gstPercent !== undefined ? editingInvoice.gstPercent : 5,
@@ -743,13 +752,25 @@ export default function InvoiceBuilder({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Travel Date</label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
+                  <Calendar size={13} style={{ color: 'var(--tb-orange)' }} />
+                  <span>Travel Date</span>
+                </label>
                 <input
-                  type="text"
+                  type="date"
                   value={formData.travelDate}
                   onChange={e => setFormData({ ...formData, travelDate: e.target.value })}
-                  placeholder="e.g. 15 Oct 2026"
-                  style={{ width: '100%', padding: '9px 12px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 13 }}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    background: 'var(--tb-input-bg)',
+                    border: '1px solid var(--tb-input-border)',
+                    color: '#fff',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    colorScheme: 'dark',
+                    cursor: 'pointer'
+                  }}
                 />
               </div>
 

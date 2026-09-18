@@ -12,6 +12,18 @@ import {
   Plus
 } from 'lucide-react';
 
+function formatTravelDate(dateStr) {
+  if (!dateStr || dateStr === 'Flexible') return dateStr || 'Flexible';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [y, m, d] = dateStr.split('-');
+    const dObj = new Date(Number(y), Number(m) - 1, Number(d));
+    if (!isNaN(dObj.getTime())) {
+      return dObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+  }
+  return dateStr;
+}
+
 export default function InvoiceListView({
   invoices = [],
   stats,
@@ -401,7 +413,7 @@ export default function InvoiceListView({
 
                     {/* Travel Date & Pax */}
                     <td style={{ padding: '16px 18px', textAlign: 'center' }}>
-                      <div style={{ color: '#fff' }}>{inv.travelDate || 'Flexible'}</div>
+                      <div style={{ color: '#fff' }}>{formatTravelDate(inv.travelDate)}</div>
                       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
                         {inv.pax ? `${inv.pax} Traveler${inv.pax > 1 ? 's' : ''}` : '1 Traveler'}
                       </div>
