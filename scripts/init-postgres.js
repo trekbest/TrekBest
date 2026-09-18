@@ -13,6 +13,7 @@ const pgConfig = {
 };
 
 async function initPostgres() {
+  const dbName = process.env.PG_DATABASE || 'trekbest';
   let pool;
 
   if (process.env.DATABASE_URL) {
@@ -33,7 +34,6 @@ async function initPostgres() {
     await adminClient.connect();
     console.log('✅ Connected to PostgreSQL server.');
 
-    const dbName = process.env.PG_DATABASE || 'trekbest';
     const checkDb = await adminClient.query(
       `SELECT 1 FROM pg_database WHERE datname = $1`,
       [dbName]
