@@ -236,7 +236,6 @@ export default function InvoicePrintModal({ invoice, onClose }) {
             <thead>
               <tr style={{ background: '#0B1310', color: '#fff' }}>
                 <th style={{ padding: '10px 12px', textAlign: 'left', borderRadius: '6px 0 0 0' }}>Service Description</th>
-                <th style={{ padding: '10px 12px', textAlign: 'center' }}>Category</th>
                 <th style={{ padding: '10px 12px', textAlign: 'center' }}>Qty</th>
                 <th style={{ padding: '10px 12px', textAlign: 'right' }}>Rate (₹)</th>
                 <th style={{ padding: '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0' }}>Amount (₹)</th>
@@ -250,11 +249,6 @@ export default function InvoicePrintModal({ invoice, onClose }) {
                     <td style={{ padding: '12px', textAlign: 'left' }}>
                       <div style={{ fontWeight: 600, color: '#111' }}>{item.title}</div>
                       {item.sub && <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{item.sub}</div>}
-                    </td>
-                    <td style={{ padding: '12px', textAlign: 'center' }}>
-                      <span style={{ background: '#f3f4f6', color: '#555', fontSize: 11, padding: '2px 8px', borderRadius: 4, fontWeight: 600 }}>
-                        {item.category || 'SERVICE'}
-                      </span>
                     </td>
                     <td style={{ padding: '12px', textAlign: 'center' }}>{item.qty}</td>
                     <td style={{ padding: '12px', textAlign: 'right' }}>₹{Number(item.rate).toLocaleString('en-IN')}</td>

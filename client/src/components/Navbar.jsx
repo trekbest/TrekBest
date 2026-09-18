@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, List, PlusCircle } from 'lucide-react';
+import { FileText, List } from 'lucide-react';
 
 export default function Navbar({ currentView, onViewChange, invoiceCount = 0, onNewInvoiceClick }) {
   return (
@@ -86,30 +86,6 @@ export default function Navbar({ currentView, onViewChange, invoiceCount = 0, on
           </button>
         </div>
 
-        {/* Quick New Invoice Action */}
-        <button
-          onClick={() => {
-            if (onNewInvoiceClick) onNewInvoiceClick();
-            else onViewChange('builder');
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '8px 16px',
-            background: 'var(--tb-orange)',
-            border: 'none',
-            color: '#fff',
-            borderRadius: 8,
-            fontSize: 12,
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(242, 92, 5, 0.3)'
-          }}
-        >
-          <PlusCircle size={15} />
-          <span>+ New</span>
-        </button>
       </div>
     </header>
   );

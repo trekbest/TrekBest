@@ -5,80 +5,13 @@ import {
   Printer,
   Save,
   CheckCircle,
+  Check,
   RotateCcw,
   Sparkles,
-  Plane,
-  Hotel,
-  Car,
-  Ticket,
-  Ship,
-  FileCheck,
   ArrowLeft,
   X,
-  PlusCircle,
-  RotateCw
+  PlusCircle
 } from 'lucide-react';
-
-const DEFAULT_PRESETS = [
-  {
-    id: 'p-1',
-    category: 'HOTEL',
-    title: '4★ / 5★ Luxury Resort Stay (MAP Plan)',
-    sub: 'Includes Welcome Drink, Daily Buffet Breakfast & Dinner',
-    rate: 14500,
-    isCustom: false
-  },
-  {
-    id: 'p-2',
-    category: 'TRANSFER',
-    title: 'Private AC Innova Crysta Cab Sightseeing',
-    sub: 'Includes fuel, driver allowance, tolls, parking, and airport transfers',
-    rate: 12000,
-    isCustom: false
-  },
-  {
-    id: 'p-3',
-    category: 'FLIGHT',
-    title: 'Roundtrip Domestic Flight Tickets',
-    sub: 'Includes 15kg check-in + 7kg cabin baggage with seat selection',
-    rate: 16800,
-    isCustom: false
-  },
-  {
-    id: 'p-4',
-    category: 'PACKAGE',
-    title: 'Dal Lake Premium Heritage Houseboat Stay',
-    sub: 'Includes 1 Hr Shikara Ride & Candlelight Dinner for 2 Guests',
-    rate: 8500,
-    isCustom: false
-  },
-  {
-    id: 'p-5',
-    category: 'ACTIVITY',
-    title: 'Cable Car / Gondola Phase 1 & 2 Passes',
-    sub: 'Direct VIP access barcode passes with guide assistance',
-    rate: 3700,
-    isCustom: false
-  },
-  {
-    id: 'p-6',
-    category: 'VISA',
-    title: 'Travel Insurance & Tourist Permits / Passes',
-    sub: 'Emergency medical coverage, flight cancellation protection & local permits',
-    rate: 2200,
-    isCustom: false
-  }
-];
-
-const CATEGORY_ICONS = {
-  HOTEL: Hotel,
-  TRANSFER: Car,
-  FLIGHT: Plane,
-  PACKAGE: Ship,
-  ACTIVITY: Ticket,
-  VISA: FileCheck,
-  CUSTOM: Sparkles
-};
 
 const INITIAL_FORM_STATE = {
   clientName: 'Rahul & Priya Sharma',
@@ -97,27 +30,10 @@ const INITIAL_FORM_STATE = {
 const INITIAL_ITEMS_STATE = [
   {
     id: 1,
-    category: 'PACKAGE',
     title: '6 Days / 5 Nights Kashmir Deluxe Tour Package',
     sub: 'Luxury Houseboat, Gulmarg Resort, Pahalgam Pine Hotel (MAP Plan)',
-    qty: 2,
-    rate: 24999
-  },
-  {
-    id: 2,
-    category: 'TRANSFER',
-    title: 'Private AC Innova Crysta for 6 Days Complete Sightseeing',
-    sub: 'Tolls, parking, driver allowance, and airport transfers included',
     qty: 1,
-    rate: 14500
-  },
-  {
-    id: 3,
-    category: 'ACTIVITY',
-    title: 'Gulmarg Gondola Phase 1 & 2 Cable Car Passes',
-    sub: 'Instant VIP skip-the-line barcode passes for 2 adults',
-    qty: 2,
-    rate: 1850
+    rate: 45000
   }
 ];
 
@@ -133,35 +49,75 @@ export default function InvoiceBuilder({
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(null);
 
-  // Custom Quick Add Presets State (persisted to localStorage)
+  // Custom Quick Add Inclusions State (persisted to localStorage)
   const [presets, setPresets] = useState(() => {
     try {
-      const saved = localStorage.getItem('tb_quick_presets');
+      const saved = localStorage.getItem('tb_custom_inclusions');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) return parsed;
       }
     } catch (e) {
-      console.error('Failed to load saved presets:', e);
+      console.error('Failed to load saved inclusions:', e);
     }
-    return DEFAULT_PRESETS;
+    return [];
   });
 
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [customForm, setCustomForm] = useState({
     title: '',
-    sub: '',
-    category: 'CUSTOM',
-    rate: ''
+    sub: ''
   });
+
+  const [activeItemId, setActiveItemId] = useState(() => (INITIAL_ITEMS_STATE[0]?.id || 1));
+
+  // Keep activeItemId valid if items change
+  useEffect(() => {
+    if (items.length > 0 && (!activeItemId || !items.some(it => it.id === activeItemId))) {
+      setActiveItemId(items[0].id);
+    }
+  }, [items, activeItemId]);
 
   const savePresets = (newPresets) => {
     setPresets(newPresets);
     try {
-      localStorage.setItem('tb_quick_presets', JSON.stringify(newPresets));
+      localStorage.setItem('tb_custom_inclusions', JSON.stringify(newPresets));
     } catch (e) {
-      console.error('Failed to save presets:', e);
+      console.error('Failed to save inclusions:', e);
     }
+  };
+
+  const handleToggleInclusion = (preset, forceAdd = false) => {
+    // Target the currently active item, or fallback to the first item
+    const targetItem = items.find(it => it.id === activeItemId) || items[0];
+    if (!targetItem) return;
+
+    const inclusionText = preset.sub ? `${preset.title} (${preset.sub})` : preset.title;
+    const currentSub = (targetItem.sub || '').trim();
+    const titleLower = preset.title.trim().toLowerCase();
+
+    // Check if preset is already present in this item's Details/Inclusions sub field
+    const isAlreadyPresent = currentSub.toLowerCase().includes(titleLower);
+
+    let newSub = '';
+    if (isAlreadyPresent && !forceAdd) {
+      // Toggle off / remove from the Details/Inclusions field
+      const parts = currentSub.split(',').map(p => p.trim()).filter(Boolean);
+      const filtered = parts.filter(p => !p.toLowerCase().includes(titleLower));
+      newSub = filtered.join(', ');
+    } else if (!isAlreadyPresent) {
+      // Toggle on / append to the Details/Inclusions field
+      if (!currentSub) {
+        newSub = inclusionText;
+      } else {
+        const cleaned = currentSub.replace(/,\s*$/, '');
+        newSub = `${cleaned}, ${inclusionText}`;
+      }
+    } else {
+      newSub = currentSub;
+    }
+
+    updateItem(targetItem.id, 'sub', newSub);
   };
 
   const handleAddCustomPreset = (e) => {
@@ -169,22 +125,20 @@ export default function InvoiceBuilder({
     if (!customForm.title.trim()) return;
 
     const newPreset = {
-      id: 'custom-' + Date.now(),
-      category: customForm.category || 'CUSTOM',
+      id: 'incl-' + Date.now(),
       title: customForm.title.trim(),
-      sub: customForm.sub.trim() || 'Custom itemized travel service',
-      rate: Number(customForm.rate) || 0,
+      sub: customForm.sub.trim(),
       isCustom: true
     };
 
     const updated = [...presets, newPreset];
     savePresets(updated);
 
-    // Also immediately add it to the active invoice!
-    addPresetItem(newPreset);
+    // Also immediately add it to the active item's Details / Inclusions field!
+    handleToggleInclusion(newPreset, true);
 
     // Reset and close
-    setCustomForm({ title: '', sub: '', category: 'CUSTOM', rate: '' });
+    setCustomForm({ title: '', sub: '' });
     setShowCustomModal(false);
   };
 
@@ -192,12 +146,6 @@ export default function InvoiceBuilder({
     e.stopPropagation();
     const updated = presets.filter(p => p.id !== id);
     savePresets(updated);
-  };
-
-  const handleResetPresets = () => {
-    if (confirm('Reset Quick Add presets to original default services?')) {
-      savePresets(DEFAULT_PRESETS);
-    }
   };
 
   // If editing an existing invoice
@@ -218,47 +166,42 @@ export default function InvoiceBuilder({
       });
 
       if (editingInvoice.items && editingInvoice.items.length > 0) {
-        setItems(editingInvoice.items.map((it, idx) => ({
+        const mappedItems = editingInvoice.items.map((it, idx) => ({
           id: it.id || idx + 1,
-          category: it.category || 'PACKAGE',
           title: it.title || '',
           sub: it.sub || '',
           qty: it.qty || 1,
           rate: it.rate || 0
-        })));
+        }));
+        setItems(mappedItems);
+        setActiveItemId(mappedItems[0].id);
       }
     } else {
       setFormData(INITIAL_FORM_STATE);
       setItems(INITIAL_ITEMS_STATE);
+      if (INITIAL_ITEMS_STATE[0]) {
+        setActiveItemId(INITIAL_ITEMS_STATE[0].id);
+      }
     }
   }, [editingInvoice]);
 
   const addItem = () => {
+    const newId = Date.now();
     setItems([
       ...items,
       {
-        id: Date.now(),
-        category: 'HOTEL',
-        title: 'Custom Travel Service / Excursion',
-        sub: 'Includes transfers & taxes',
+        id: newId,
+        title: '',
+        sub: '',
         qty: 1,
-        rate: 5000
+        rate: 0
       }
     ]);
+    setActiveItemId(newId);
   };
 
   const addPresetItem = (preset) => {
-    setItems(prevItems => [
-      ...prevItems,
-      {
-        id: Date.now() + Math.random(),
-        category: preset.category || 'CUSTOM',
-        title: preset.title,
-        sub: preset.sub || '',
-        qty: 1,
-        rate: Number(preset.rate) || 0
-      }
-    ]);
+    handleToggleInclusion(preset);
   };
 
   const updateItem = (id, field, value) => {
@@ -277,6 +220,7 @@ export default function InvoiceBuilder({
 
   const resetForm = () => {
     if (confirm('Clear form and reset to a fresh blank invoice?')) {
+      const newId = Date.now();
       setFormData({
         clientName: '',
         clientEmail: '',
@@ -292,14 +236,14 @@ export default function InvoiceBuilder({
       });
       setItems([
         {
-          id: Date.now(),
-          category: 'PACKAGE',
+          id: newId,
           title: 'Custom Travel Package',
-          sub: 'Detailed itinerary and inclusions',
+          sub: '',
           qty: 1,
-          rate: 15000
+          rate: 0
         }
       ]);
+      setActiveItemId(newId);
     }
   };
 
@@ -333,11 +277,10 @@ export default function InvoiceBuilder({
       travelDate: formData.travelDate,
       pax: Number(formData.pax),
       items: items.map(it => ({
-        category: it.category,
         title: it.title,
         sub: it.sub,
-        qty: Number(it.qty),
-        rate: Number(it.rate)
+        qty: Number(it.qty) || 1,
+        rate: Number(it.rate) || 0
       })),
       discount: discountAmount,
       gstPercent: gstRate,
@@ -521,10 +464,10 @@ export default function InvoiceBuilder({
           flexWrap: 'wrap',
           gap: 10
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <Sparkles size={16} color="var(--tb-orange)" />
             <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 0.5 }}>
-              QUICK ADD TRAVEL SERVICES (1-CLICK PRESETS):
+              PACKAGE INCLUSIONS (QUICK ADD):
             </span>
             <span style={{
               fontSize: 11,
@@ -534,8 +477,21 @@ export default function InvoiceBuilder({
               borderRadius: 12,
               fontWeight: 700
             }}>
-              {presets.length} Presets
+              {presets.length} Saved Inclusions
             </span>
+            {items.length > 1 && (
+              <span style={{
+                fontSize: 11,
+                color: 'var(--tb-orange)',
+                background: 'rgba(242, 92, 5, 0.08)',
+                padding: '2px 9px',
+                borderRadius: 10,
+                border: '1px solid rgba(242, 92, 5, 0.25)',
+                fontWeight: 600
+              }}>
+                Target: Item #{items.findIndex(it => it.id === activeItemId) + 1 || 1}
+              </span>
+            )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -558,35 +514,12 @@ export default function InvoiceBuilder({
               }}
             >
               <PlusCircle size={14} />
-              <span>{showCustomModal ? 'Close Form' : '+ Add Custom Preset'}</span>
+              <span>{showCustomModal ? 'Close Form' : '+ Add Inclusion'}</span>
             </button>
-
-            {presets.length !== DEFAULT_PRESETS.length && (
-              <button
-                type="button"
-                onClick={handleResetPresets}
-                title="Reset Quick Add to standard defaults"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  padding: '6px 10px',
-                  background: 'transparent',
-                  border: '1px solid var(--tb-card-border)',
-                  color: 'var(--text-muted)',
-                  borderRadius: 8,
-                  fontSize: 11,
-                  cursor: 'pointer'
-                }}
-              >
-                <RotateCw size={11} />
-                <span>Reset</span>
-              </button>
-            )}
           </div>
         </div>
 
-        {/* Custom Preset Creator Drawer */}
+        {/* Custom Inclusion Creator Drawer */}
         {showCustomModal && (
           <form
             onSubmit={handleAddCustomPreset}
@@ -603,10 +536,10 @@ export default function InvoiceBuilder({
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Sparkles size={15} color="var(--tb-orange)" />
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>
-                  Create Custom 1-Click Preset
+                  Create Package Inclusion
                 </span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                  (Saves to your browser & adds immediately to invoice)
+                  (Saves to quick-add & applies to "Details / Inclusions" field)
                 </span>
               </div>
               <button
@@ -618,30 +551,13 @@ export default function InvoiceBuilder({
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '120px 2fr 2fr 130px auto', gap: 10, alignItems: 'end' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr auto', gap: 12, alignItems: 'end' }}>
               <div>
-                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Category</label>
-                <select
-                  value={customForm.category}
-                  onChange={e => setCustomForm({ ...customForm, category: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: 'var(--tb-orange)', borderRadius: 8, fontSize: 12, fontWeight: 700 }}
-                >
-                  <option value="CUSTOM">CUSTOM</option>
-                  <option value="HOTEL">HOTEL</option>
-                  <option value="TRANSFER">TRANSFER</option>
-                  <option value="FLIGHT">FLIGHT</option>
-                  <option value="PACKAGE">PACKAGE</option>
-                  <option value="ACTIVITY">ACTIVITY</option>
-                  <option value="VISA">VISA</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Preset Title *</label>
+                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Inclusion Title *</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Dubai Desert Safari with BBQ"
+                  placeholder="e.g. 4★ Luxury Hotel Stay, Breakfast, Sightseeing Cab"
                   value={customForm.title}
                   onChange={e => setCustomForm({ ...customForm, title: e.target.value })}
                   style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 12 }}
@@ -649,25 +565,12 @@ export default function InvoiceBuilder({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Subtitle / Inclusions</label>
+                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Details / Notes (Optional)</label>
                 <input
                   type="text"
-                  placeholder="e.g. Dune bashing, camel ride & dinner"
+                  placeholder="e.g. Daily buffet breakfast & dinner, private AC vehicle"
                   value={customForm.sub}
                   onChange={e => setCustomForm({ ...customForm, sub: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 12 }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Price / Rate (₹) *</label>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  placeholder="e.g. 4500"
-                  value={customForm.rate}
-                  onChange={e => setCustomForm({ ...customForm, rate: e.target.value })}
                   style={{ width: '100%', padding: '8px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 12 }}
                 />
               </div>
@@ -676,7 +579,7 @@ export default function InvoiceBuilder({
                 <button
                   type="submit"
                   style={{
-                    padding: '8px 16px',
+                    padding: '8px 18px',
                     background: 'var(--tb-orange)',
                     border: 'none',
                     color: '#fff',
@@ -688,73 +591,90 @@ export default function InvoiceBuilder({
                     boxShadow: '0 2px 8px rgba(242, 92, 5, 0.3)'
                   }}
                 >
-                  + Save & Add
+                  + Save & Add to Field
                 </button>
               </div>
             </div>
           </form>
         )}
 
-        {/* 1-Click Preset Chips Grid */}
+        {/* Inclusions Chips Grid */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          {presets.map((preset) => {
-            const IconComp = CATEGORY_ICONS[preset.category] || Sparkles;
-            return (
-              <div
-                key={preset.id}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  background: 'var(--tb-dark)',
-                  border: preset.isCustom ? '1px solid rgba(242, 92, 5, 0.5)' : '1px solid var(--tb-card-border)',
-                  borderRadius: 8,
-                  overflow: 'hidden',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => addPresetItem(preset)}
-                  title={`Click to add to invoice:\n${preset.title}\n(${preset.sub})`}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '7px 12px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#fff',
-                    fontSize: 12,
-                    cursor: 'pointer'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.parentElement.style.borderColor = 'var(--tb-orange)'}
-                  onMouseOut={(e) => e.currentTarget.parentElement.style.borderColor = preset.isCustom ? 'rgba(242, 92, 5, 0.5)' : 'var(--tb-card-border)'}
-                >
-                  <IconComp size={14} color="var(--tb-orange)" />
-                  <span>{preset.title.split('(')[0].trim()}</span>
-                  {preset.isCustom && (
-                    <span style={{
-                      fontSize: 9,
-                      textTransform: 'uppercase',
-                      background: 'rgba(242, 92, 5, 0.2)',
-                      color: 'var(--tb-orange)',
-                      padding: '1px 5px',
-                      borderRadius: 4,
-                      fontWeight: 700
-                    }}>
-                      Custom
-                    </span>
-                  )}
-                  <span style={{ color: 'var(--tb-green)', fontWeight: 600 }}>
-                    +₹{Number(preset.rate).toLocaleString('en-IN')}
-                  </span>
-                </button>
+          {presets.length === 0 ? (
+            <div style={{ color: 'var(--text-muted)', fontSize: 12, fontStyle: 'italic', padding: '4px 0' }}>
+              No custom inclusions saved yet. Click <strong>"+ Add Inclusion"</strong> above to add services/amenities included in your packages.
+            </div>
+          ) : (
+            presets.map((preset) => {
+              const targetItem = items.find(it => it.id === activeItemId) || items[0];
+              const isSelected = targetItem && targetItem.sub
+                ? targetItem.sub.toLowerCase().includes(preset.title.trim().toLowerCase())
+                : false;
 
-                {preset.isCustom && (
+              return (
+                <div
+                  key={preset.id}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    background: isSelected ? 'rgba(242, 92, 5, 0.16)' : 'var(--tb-dark)',
+                    border: isSelected ? '1.5px solid var(--tb-orange)' : '1px solid rgba(242, 92, 5, 0.35)',
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    boxShadow: isSelected ? '0 0 10px rgba(242, 92, 5, 0.25)' : 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleToggleInclusion(preset)}
+                    title={
+                      isSelected
+                        ? `Selected in "${targetItem?.title || 'Package'}". Click to remove.`
+                        : `Click to add "${preset.title}" into Details / Inclusions field`
+                    }
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 7,
+                      padding: '7px 12px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: isSelected ? '#fff' : '#e2e8f0',
+                      fontSize: 12,
+                      cursor: 'pointer'
+                    }}
+                    onMouseOver={(e) => {
+                      if (!isSelected) e.currentTarget.parentElement.style.borderColor = 'var(--tb-orange)';
+                    }}
+                    onMouseOut={(e) => {
+                      if (!isSelected) e.currentTarget.parentElement.style.borderColor = 'rgba(242, 92, 5, 0.35)';
+                    }}
+                  >
+                    {isSelected ? (
+                      <Check size={13} color="var(--tb-orange)" strokeWidth={2.8} />
+                    ) : (
+                      <Sparkles size={13} color="var(--tb-orange)" />
+                    )}
+                    <span style={{ fontWeight: isSelected ? 700 : 600 }}>{preset.title}</span>
+                    {preset.sub && (
+                      <span style={{
+                        fontSize: 11,
+                        color: isSelected ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)',
+                        maxWidth: 200,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        ({preset.sub})
+                      </span>
+                    )}
+                  </button>
+
                   <button
                     type="button"
                     onClick={(e) => handleDeletePreset(preset.id, e)}
-                    title="Remove this custom preset"
+                    title="Delete this inclusion preset"
                     style={{
                       padding: '7px 8px',
                       background: 'transparent',
@@ -771,10 +691,10 @@ export default function InvoiceBuilder({
                   >
                     <X size={12} />
                   </button>
-                )}
-              </div>
-            );
-          })}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -896,80 +816,100 @@ export default function InvoiceBuilder({
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    background: 'var(--tb-dark)',
-                    padding: 14,
-                    borderRadius: 10,
-                    border: '1px solid var(--tb-card-border)',
-                    display: 'grid',
-                    gridTemplateColumns: '120px 2fr 70px 110px 40px',
-                    gap: 10,
-                    alignItems: 'center'
-                  }}
-                >
-                  {/* Category */}
-                  <div>
-                    <select
-                      value={item.category}
-                      onChange={e => updateItem(item.id, 'category', e.target.value)}
-                      style={{ width: '100%', padding: '7px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: 'var(--tb-orange)', borderRadius: 6, fontSize: 11, fontWeight: 700 }}
-                    >
-                      <option value="PACKAGE">PACKAGE</option>
-                      <option value="HOTEL">HOTEL</option>
-                      <option value="FLIGHT">FLIGHT</option>
-                      <option value="TRANSFER">TRANSFER</option>
-                      <option value="ACTIVITY">ACTIVITY</option>
-                      <option value="VISA">VISA</option>
-                    </select>
-                  </div>
+            {/* Column Headers */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 75px 120px 40px',
+              gap: 12,
+              padding: '0 14px 6px',
+              fontSize: 11,
+              fontWeight: 700,
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: 0.5
+            }}>
+              <span>Service Description & Inclusions</span>
+              <span style={{ textAlign: 'center' }}>Qty</span>
+              <span style={{ textAlign: 'right' }}>Rate (₹)</span>
+              <span></span>
+            </div>
 
-                  {/* Title & Sub */}
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Service title"
-                      value={item.title}
-                      onChange={e => updateItem(item.id, 'title', e.target.value)}
-                      style={{ width: '100%', padding: '6px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, marginBottom: 4 }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Details / Inclusions"
-                      value={item.sub}
-                      onChange={e => updateItem(item.id, 'sub', e.target.value)}
-                      style={{ width: '100%', padding: '4px 10px', background: 'transparent', border: '1px solid #22382f', color: 'var(--text-muted)', borderRadius: 6, fontSize: 11 }}
-                    />
-                  </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {items.map((item) => {
+                const isActive = item.id === activeItemId;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => setActiveItemId(item.id)}
+                    style={{
+                      background: 'var(--tb-dark)',
+                      padding: 14,
+                      borderRadius: 10,
+                      border: isActive ? '1px solid rgba(242, 92, 5, 0.45)' : '1px solid var(--tb-card-border)',
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 75px 120px 40px',
+                      gap: 12,
+                      alignItems: 'center',
+                      transition: 'all 0.2s ease',
+                      boxShadow: isActive ? '0 2px 10px rgba(242, 92, 5, 0.08)' : 'none'
+                    }}
+                  >
+                    {/* Title & Sub */}
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Service / Package title"
+                        value={item.title}
+                        onFocus={() => setActiveItemId(item.id)}
+                        onChange={e => updateItem(item.id, 'title', e.target.value)}
+                        style={{ width: '100%', padding: '7px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, marginBottom: 4 }}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Details / Inclusions (e.g. Hotel, Meals, Sightseeing, Transfers)"
+                        value={item.sub}
+                        onFocus={() => setActiveItemId(item.id)}
+                        onChange={e => updateItem(item.id, 'sub', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '6px 10px',
+                          background: isActive ? 'rgba(242, 92, 5, 0.05)' : 'transparent',
+                          border: isActive ? '1px solid rgba(242, 92, 5, 0.5)' : '1px solid #22382f',
+                          color: '#e2e8f0',
+                          borderRadius: 6,
+                          fontSize: 11,
+                          transition: 'all 0.15s ease'
+                        }}
+                      />
+                    </div>
 
-                  {/* Qty */}
-                  <div>
-                    <input
-                      type="number"
-                      min="1"
-                      placeholder="Qty"
-                      value={item.qty}
-                      onChange={e => updateItem(item.id, 'qty', e.target.value)}
-                      style={{ width: '100%', padding: '6px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'center' }}
-                    />
-                  </div>
+                    {/* Qty */}
+                    <div>
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Qty"
+                        value={item.qty}
+                        onFocus={() => setActiveItemId(item.id)}
+                        onChange={e => updateItem(item.id, 'qty', e.target.value)}
+                        style={{ width: '100%', padding: '7px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'center' }}
+                      />
+                    </div>
 
-                  {/* Rate */}
-                  <div>
-                    <input
-                      type="number"
-                      placeholder="Rate"
-                      value={item.rate}
-                      onChange={e => updateItem(item.id, 'rate', e.target.value)}
-                      style={{ width: '100%', padding: '6px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'right' }}
-                    />
-                  </div>
+                    {/* Rate */}
+                    <div>
+                      <input
+                        type="number"
+                        placeholder="Rate (₹)"
+                        value={item.rate}
+                        onFocus={() => setActiveItemId(item.id)}
+                        onChange={e => updateItem(item.id, 'rate', e.target.value)}
+                        style={{ width: '100%', padding: '7px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'right' }}
+                      />
+                    </div>
 
                   {/* Delete */}
-                  <div>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <button
                       type="button"
                       onClick={() => removeItem(item.id)}
@@ -986,7 +926,8 @@ export default function InvoiceBuilder({
                     </button>
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           </div>
         </div>

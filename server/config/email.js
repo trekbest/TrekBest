@@ -158,7 +158,6 @@ async function sendInvoiceEmail(invoice) {
         <strong style="color: #F2F7F4; font-size: 13px;">${item.title || 'Travel Service'}</strong>
         ${item.sub ? `<div style="color: #8FA298; font-size: 11px; margin-top: 2px;">${item.sub}</div>` : ''}
       </td>
-      <td style="padding: 10px 8px; color: #F25C05; font-size: 12px; font-weight: bold;">${item.category || 'TOUR'}</td>
       <td style="padding: 10px 8px; text-align: center; color: #CCDCD4; font-size: 12px;">${item.qty || 1}</td>
       <td style="padding: 10px 8px; text-align: right; color: #CCDCD4; font-size: 12px;">${curr}${Number(item.rate || 0).toLocaleString('en-IN')}</td>
       <td style="padding: 10px 8px; text-align: right; color: #F2F7F4; font-weight: bold; font-size: 12px;">${curr}${Number((item.qty || 1) * (item.rate || 0)).toLocaleString('en-IN')}</td>
@@ -224,7 +223,6 @@ async function sendInvoiceEmail(invoice) {
               <tr style="background: #142B20; color: #8FA298; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; text-align: left;">
                 <th style="padding: 10px 8px; width: 28px; text-align: center;">#</th>
                 <th style="padding: 10px 8px;">Service Details</th>
-                <th style="padding: 10px 8px;">Category</th>
                 <th style="padding: 10px 8px; text-align: center;">Qty</th>
                 <th style="padding: 10px 8px; text-align: right;">Rate</th>
                 <th style="padding: 10px 8px; text-align: right;">Total</th>
