@@ -49,7 +49,9 @@ function convertPlaceholders(sql) {
 let dbInterface;
 
 const isVercel = Boolean(process.env.VERCEL || process.env.VERCEL_ENV);
-const hasCloudDb = Boolean(process.env.DATABASE_URL || (process.env.PG_HOST && process.env.PG_HOST !== 'localhost'));
+const NEON_DEFAULT_DB_URL = "postgresql://neondb_owner:npg_h7MYdtB6vwlJ@ep-curly-bread-b5i4u7el-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require";
+const activeDbUrl = process.env.DATABASE_URL || (isVercel ? NEON_DEFAULT_DB_URL : null);
+const hasCloudDb = Boolean(activeDbUrl || (process.env.PG_HOST && process.env.PG_HOST !== 'localhost'));
 
 function loadFallbackData() {
   const tmpFile = path.join('/tmp', 'trekbest_db.json');
@@ -246,16 +248,187 @@ function createFallbackInterface() {
   };
 }
 
+let initPostgresPromise = null;
+
+async function initPostgresSchema(pool) {
+  try {
+    // 1. Create tables if they do not exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS packages (
+        id VARCHAR(255) PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        dest VARCHAR(255) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        ishoneymoon INTEGER DEFAULT 0,
+        duration VARCHAR(100) NOT NULL,
+        price NUMERIC NOT NULL,
+        currency VARCHAR(20) DEFAULT 'INR',
+        rating VARCHAR(20) DEFAULT '4.8',
+        reviewcount INTEGER DEFAULT 0,
+        image TEXT,
+        highlights TEXT,
+        itinerary TEXT,
+        inclusions TEXT,
+        invoiceitems TEXT,
+        createdat TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS bookings (
+        id VARCHAR(255) PRIMARY KEY,
+        packageid VARCHAR(255),
+        packagetitle VARCHAR(255),
+        customername VARCHAR(255) NOT NULL,
+        customeremail VARCHAR(255) NOT NULL,
+        customerphone VARCHAR(100) NOT NULL,
+        traveldate VARCHAR(100) NOT NULL,
+        travelers INTEGER DEFAULT 2,
+        specialrequests TEXT,
+        totalamount NUMERIC DEFAULT 0,
+        status VARCHAR(50) DEFAULT 'Confirmed',
+        createdat TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS invoices (
+        id VARCHAR(255) PRIMARY KEY,
+        invoiceno VARCHAR(100) UNIQUE NOT NULL,
+        clientname VARCHAR(255) NOT NULL,
+        clientemail VARCHAR(255),
+        clientphone VARCHAR(100),
+        clientaddress TEXT,
+        destination VARCHAR(255),
+        traveldate VARCHAR(100),
+        pax INTEGER DEFAULT 1,
+        items TEXT NOT NULL,
+        discount NUMERIC DEFAULT 0,
+        gstpercent NUMERIC DEFAULT 5,
+        subtotal NUMERIC NOT NULL,
+        tax NUMERIC NOT NULL,
+        total NUMERIC NOT NULL,
+        currency VARCHAR(20) DEFAULT 'INR',
+        status VARCHAR(50) DEFAULT 'Paid',
+        notes TEXT,
+        createdat TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS reviews (
+        id VARCHAR(255) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        location VARCHAR(255),
+        trip VARCHAR(255),
+        rating NUMERIC DEFAULT 5,
+        comment TEXT NOT NULL,
+        avatar TEXT,
+        createdat TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS contact_messages (
+        id VARCHAR(255) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(100),
+        subject VARCHAR(255),
+        message TEXT NOT NULL,
+        createdat TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    // 2. Check if packages table is empty, seed initial data from database.json if so
+    const countRes = await pool.query('SELECT COUNT(*) as count FROM packages');
+    const count = parseInt(countRes.rows[0].count, 10);
+
+    if (count === 0 && fs.existsSync(SEED_JSON_PATH)) {
+      console.log('🌱 Auto-seeding initial packages & invoices into PostgreSQL...');
+      const seedData = JSON.parse(fs.readFileSync(SEED_JSON_PATH, 'utf8'));
+
+      if (Array.isArray(seedData.packages)) {
+        for (const p of seedData.packages) {
+          await pool.query(`
+            INSERT INTO packages (id, title, dest, category, ishoneymoon, duration, price, currency, rating, reviewcount, image, highlights, itinerary, inclusions, invoiceitems, createdat)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW())
+            ON CONFLICT (id) DO NOTHING
+          `, [
+            p.id || `pkg-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+            p.title || 'Untitled Tour',
+            p.dest || 'India',
+            p.category || 'DOMESTIC',
+            p.isHoneymoon ? 1 : 0,
+            p.duration || '4 Days / 3 Nights',
+            p.price || 19999,
+            p.currency || 'INR',
+            p.rating || '4.8',
+            p.reviewCount || 50,
+            p.image || '',
+            JSON.stringify(p.highlights || []),
+            JSON.stringify(p.itinerary || []),
+            JSON.stringify(p.inclusions || []),
+            JSON.stringify(p.invoiceItems || [])
+          ]);
+        }
+      }
+
+      if (Array.isArray(seedData.invoices)) {
+        for (const inv of seedData.invoices) {
+          await pool.query(`
+            INSERT INTO invoices (id, invoiceno, clientname, clientemail, clientphone, clientaddress, destination, traveldate, pax, items, discount, gstpercent, subtotal, tax, total, currency, status, notes, createdat)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, NOW())
+            ON CONFLICT (id) DO NOTHING
+          `, [
+            inv.id || `inv-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+            inv.invoiceNo || `TB-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+            inv.clientName || 'Valued Traveler',
+            inv.clientEmail || 'client@example.com',
+            inv.clientPhone || '+91 98765 43210',
+            inv.clientAddress || '',
+            inv.destination || 'Special Tour',
+            inv.travelDate || 'Flexible',
+            inv.pax || 2,
+            JSON.stringify(inv.items || []),
+            inv.discount || 0,
+            inv.gstPercent || 5,
+            inv.subtotal || inv.total || 0,
+            inv.tax || 0,
+            inv.total || 0,
+            inv.currency || 'INR',
+            inv.status || 'Paid',
+            inv.notes || 'All permits and taxes included.'
+          ]);
+        }
+      }
+
+      if (Array.isArray(seedData.reviews)) {
+        for (const r of seedData.reviews) {
+          await pool.query(`
+            INSERT INTO reviews (id, name, location, trip, rating, comment, avatar, createdat)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+            ON CONFLICT (id) DO NOTHING
+          `, [
+            r.id || `rev-${Date.now()}`,
+            r.name || 'Anonymous',
+            r.location || 'India',
+            r.trip || 'Tour Package',
+            r.rating || 5,
+            r.comment || '',
+            r.avatar || ''
+          ]);
+        }
+      }
+      console.log('✅ PostgreSQL auto-seeding completed.');
+    }
+  } catch (err) {
+    console.error('⚠️ PostgreSQL schema auto-init warning:', err.message);
+  }
+}
+
 if (isPostgres && (!isVercel || hasCloudDb)) {
   const isCloudOrSsl = process.env.PG_SSL === 'true' || 
     (process.env.PG_HOST && process.env.PG_HOST !== 'localhost') ||
-    Boolean(process.env.DATABASE_URL);
+    Boolean(activeDbUrl);
 
-  const poolConfig = process.env.DATABASE_URL
+  const poolConfig = activeDbUrl
     ? {
-        connectionString: process.env.DATABASE_URL,
-        ssl: isCloudOrSsl ? { rejectUnauthorized: false } : false,
-        connectionTimeoutMillis: 5000
+        connectionString: activeDbUrl,
+        ssl: { rejectUnauthorized: false },
+        connectionTimeoutMillis: 10000
       }
     : {
         host: process.env.PG_HOST || 'localhost',
@@ -269,13 +442,17 @@ if (isPostgres && (!isVercel || hasCloudDb)) {
 
   const pool = new Pool(poolConfig);
 
-  const targetDisplay = process.env.DATABASE_URL ? 'Cloud DATABASE_URL' : `${process.env.PG_HOST || 'localhost'}:${process.env.PG_PORT || 5432}/${process.env.PG_DATABASE || 'trekbest'}`;
+  const targetDisplay = activeDbUrl ? 'Cloud Neon PostgreSQL' : `${process.env.PG_HOST || 'localhost'}:${process.env.PG_PORT || 5432}/${process.env.PG_DATABASE || 'trekbest'}`;
   console.log(`🗄️ Database: PostgreSQL (${targetDisplay})`);
+
+  // Auto-initialize schema in background
+  initPostgresPromise = initPostgresSchema(pool);
 
   dbInterface = {
     isPostgres: true,
     pool,
     query: async (sql, params = []) => {
+      if (initPostgresPromise) await initPostgresPromise;
       const pgSql = convertPlaceholders(sql);
       const res = await pool.query(pgSql, params);
       return res;
@@ -284,16 +461,19 @@ if (isPostgres && (!isVercel || hasCloudDb)) {
       const pgSql = convertPlaceholders(sql);
       return {
         all: async (...params) => {
+          if (initPostgresPromise) await initPostgresPromise;
           const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
           const res = await pool.query(pgSql, flatParams);
           return res.rows.map(normalizeRow);
         },
         get: async (...params) => {
+          if (initPostgresPromise) await initPostgresPromise;
           const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
           const res = await pool.query(pgSql, flatParams);
           return res.rows.length > 0 ? normalizeRow(res.rows[0]) : null;
         },
         run: async (...params) => {
+          if (initPostgresPromise) await initPostgresPromise;
           const flatParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
           const res = await pool.query(pgSql, flatParams);
           return { changes: res.rowCount };
@@ -301,12 +481,36 @@ if (isPostgres && (!isVercel || hasCloudDb)) {
       };
     },
     exec: async (sql) => {
+      if (initPostgresPromise) await initPostgresPromise;
       return pool.query(sql);
+    },
+    getDbStatus: async () => {
+      if (initPostgresPromise) await initPostgresPromise;
+      const invRes = await pool.query('SELECT COUNT(*) as c FROM invoices').catch(() => ({ rows: [{ c: 0 }] }));
+      const pkgRes = await pool.query('SELECT COUNT(*) as c FROM packages').catch(() => ({ rows: [{ c: 0 }] }));
+      return {
+        type: 'PostgreSQL',
+        target: targetDisplay,
+        persistent: true,
+        invoicesCount: parseInt(invRes.rows[0].c, 10),
+        packagesCount: parseInt(pkgRes.rows[0].c, 10)
+      };
     }
   };
 } else if (isVercel && !hasCloudDb) {
   // On Vercel without a cloud Postgres configured, use the resilient /tmp storage engine
   dbInterface = createFallbackInterface();
+  dbInterface.getDbStatus = async () => {
+    const data = loadFallbackData();
+    return {
+      type: 'Serverless Fallback (/tmp)',
+      target: '/tmp/trekbest_db.json',
+      persistent: false,
+      warning: '⚠️ Data will NOT permanently persist across cold starts. Please configure DATABASE_URL in your Vercel Project Settings.',
+      invoicesCount: (data.invoices || []).length,
+      packagesCount: (data.packages || []).length
+    };
+  };
 } else {
   // SQLite Fallback for local dev
   let DatabaseSync;
@@ -318,6 +522,10 @@ if (isPostgres && (!isVercel || hasCloudDb)) {
 
   if (!DatabaseSync) {
     dbInterface = createFallbackInterface();
+    dbInterface.getDbStatus = async () => ({
+      type: 'Fallback',
+      persistent: false
+    });
   } else {
     const DB_PATH = process.env.DB_PATH ? path.resolve(process.env.DB_PATH) : path.join(__dirname, '..', '..', 'data', 'trekbest.db');
     const dataDir = path.dirname(DB_PATH);
@@ -353,7 +561,12 @@ if (isPostgres && (!isVercel || hasCloudDb)) {
       },
       exec: async (sql) => {
         return sqliteDb.exec(sql);
-      }
+      },
+      getDbStatus: async () => ({
+        type: 'SQLite',
+        target: DB_PATH,
+        persistent: true
+      })
     };
   }
 }

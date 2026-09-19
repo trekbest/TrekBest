@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure database initializes and seeds
-require('./config/db');
+const db = require('./config/db');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -18,10 +18,18 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static assets (logos, images, etc.)
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 
-// Vercel Serverless URL Normalizer: Restore original requested path if rewritten
+// Vercel Serverless URL Normalizer: Restore original requested path if rewritten while preserving query parameters
 app.use((req, res, next) => {
   if (req.query && req.query.url) {
-    req.url = req.query.url;
+    const targetUrl = req.query.url;
+    const queryParams = new URLSearchParams();
+    for (const [key, val] of Object.entries(req.query)) {
+      if (key !== 'url') {
+        queryParams.append(key, val);
+      }
+    }
+    const qs = queryParams.toString();
+    req.url = targetUrl + (qs ? `?${qs}` : '');
   } else if (req.headers['x-matched-path']) {
     req.url = req.headers['x-matched-path'];
   } else if (req.headers['x-forwarded-uri']) {
@@ -39,6 +47,22 @@ app.get(['/api/health', '/health'], (req, res) => {
     message: 'TrekBest API Server is active!',
     timestamp: new Date().toISOString()
   });
+});
+
+// Database Health & Persistence Status
+app.get(['/api/db-status', '/db-status'], async (req, res) => {
+  try {
+    const isVercel = Boolean(process.env.VERCEL || process.env.VERCEL_ENV);
+    const dbStatus = db.getDbStatus ? await db.getDbStatus() : { status: 'unknown' };
+    res.json({
+      success: true,
+      isVercel,
+      ...dbStatus,
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // Import route handlers

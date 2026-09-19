@@ -1,13 +1,17 @@
 const nodemailer = require('nodemailer');
 
+const DEFAULT_SMTP = {
+  host: 'smtp.gmail.com',
+  port: 587,
+  user: 'trekbest30@gmail.com',
+  pass: 'yeim bnsl ifcg mvqs',
+  from: 'TrekBest Travel & Tours <trekbest30@gmail.com>'
+};
+
 // Check if SMTP is configured
 function isSmtpConfigured() {
-  return Boolean(
-    process.env.SMTP_HOST &&
-    process.env.SMTP_USER &&
-    process.env.SMTP_PASS &&
-    process.env.SMTP_PASS !== 'your_smtp_password_or_app_password'
-  );
+  const pass = process.env.SMTP_PASS || DEFAULT_SMTP.pass;
+  return Boolean(pass && pass !== 'your_smtp_password_or_app_password');
 }
 
 // Create Nodemailer transporter
@@ -17,12 +21,12 @@ function getTransporter() {
   }
 
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
+    host: process.env.SMTP_HOST || DEFAULT_SMTP.host,
+    port: Number(process.env.SMTP_PORT) || DEFAULT_SMTP.port,
     secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465',
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
+      user: process.env.SMTP_USER || DEFAULT_SMTP.user,
+      pass: process.env.SMTP_PASS || DEFAULT_SMTP.pass
     }
   });
 }
