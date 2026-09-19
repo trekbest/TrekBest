@@ -66,35 +66,23 @@ export default function InvoicePrintModal({ invoice, onClose }) {
       padding: 20,
       animation: 'tbModalFadeIn 0.25s ease'
     }}>
-      <div style={{
-        background: '#fff',
-        color: '#1a1a1a',
-        width: '100%',
-        maxWidth: 840,
-        maxHeight: '94vh',
-        overflowY: 'auto',
-        borderRadius: 20,
-        padding: '36px 40px',
-        position: 'relative',
-        boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 0, 0, 0.5)',
-        fontFamily: 'Inter, sans-serif',
-        animation: 'tbModalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-      }}>
+      <div className="tb-modal-sheet">
         {/* Floating Print Bar */}
-        <div className="no-print" style={{
+        <div className="no-print tb-modal-floating-bar" style={{
           position: 'sticky',
           top: -20,
-          background: 'rgba(255,255,255,0.95)',
+          background: 'rgba(255,255,255,0.98)',
           backdropFilter: 'blur(6px)',
-          padding: '10px 0 20px',
+          padding: '10px 0 16px',
           borderBottom: '1px solid #eee',
-          marginBottom: 24,
+          marginBottom: 20,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          gap: 10,
           zIndex: 20
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <span style={{
               background: invoice.status === 'Paid' ? '#10B981' : '#F59E0B',
               color: '#fff',
@@ -110,7 +98,7 @@ export default function InvoicePrintModal({ invoice, onClose }) {
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             {invoice.clientEmail && (
               <button
                 onClick={handleSendEmail}
@@ -119,20 +107,20 @@ export default function InvoicePrintModal({ invoice, onClose }) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6,
-                  padding: '8px 16px',
+                  padding: '8px 14px',
                   background: '#f25c05',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 8,
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: 600,
                   cursor: sendingEmail ? 'not-allowed' : 'pointer',
                   boxShadow: '0 2px 8px rgba(242, 92, 5, 0.3)'
                 }}
                 title={`Send invoice voucher directly to ${invoice.clientEmail}`}
               >
-                <Mail size={15} />
-                <span>{sendingEmail ? 'Sending...' : 'Email Voucher'}</span>
+                <Mail size={14} />
+                <span>{sendingEmail ? 'Sending...' : 'Email'}</span>
               </button>
             )}
 
@@ -142,17 +130,17 @@ export default function InvoicePrintModal({ invoice, onClose }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6,
-                padding: '8px 16px',
+                padding: '8px 14px',
                 background: '#0B1310',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 8,
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer'
               }}
             >
-              <Printer size={15} /> Print / Save as PDF
+              <Printer size={14} /> Print / PDF
             </button>
 
             <button
@@ -161,8 +149,8 @@ export default function InvoicePrintModal({ invoice, onClose }) {
                 background: '#f3f4f6',
                 border: 'none',
                 color: '#333',
-                width: 34,
-                height: 34,
+                width: 32,
+                height: 32,
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
@@ -170,7 +158,7 @@ export default function InvoicePrintModal({ invoice, onClose }) {
                 cursor: 'pointer'
               }}
             >
-              <X size={18} />
+              <X size={17} />
             </button>
           </div>
         </div>
@@ -197,39 +185,39 @@ export default function InvoicePrintModal({ invoice, onClose }) {
         {/* Printable Invoice Sheet */}
         <div id="printable-voucher">
           {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #0B1310', paddingBottom: 20, marginBottom: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <img src="/trekbest-logo.png" alt="TrekBest Logo" style={{ height: 60, width: 'auto', borderRadius: 6 }} onError={(e) => { e.target.src = '/assets/trekbest-logo.png'; }} />
+          <div className="tb-print-header-grid" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #0B1310', paddingBottom: 18, marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <img src="/trekbest-logo.png" alt="TrekBest Logo" style={{ height: 50, width: 'auto', borderRadius: 6 }} onError={(e) => { e.target.src = '/assets/trekbest-logo.png'; }} />
               <div>
-                <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0, letterSpacing: -0.5, color: '#0B1310' }}>
+                <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0, letterSpacing: -0.5, color: '#0B1310' }}>
                   trek<span style={{ color: '#F25C05' }}>best</span>
                 </h1>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#4D7C33', letterSpacing: 2 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: '#4D7C33', letterSpacing: 1.5 }}>
                   TRAVEL & TOURS
                 </div>
-                <div style={{ fontSize: 11, color: '#666', marginTop: 3 }}>
-                  📞 +91 98249 99054 / +91 95104 42740 | ✉ trekbest30@gmail.com
+                <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>
+                  📞 +91 98249 99054 / 95104 42740 | ✉ trekbest30@gmail.com
                 </div>
               </div>
             </div>
 
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#0B1310', textTransform: 'uppercase' }}>
+            <div className="tb-print-header-right" style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#0B1310', textTransform: 'uppercase' }}>
                 TRAVEL VOUCHER / INVOICE
               </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#F25C05', marginTop: 4 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#F25C05', marginTop: 3 }}>
                 {invoice.invoiceNo}
               </div>
-              <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+              <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>
                 Date: {new Date(invoice.createdAt || Date.now()).toLocaleDateString('en-GB')}
               </div>
             </div>
           </div>
 
           {/* Client & Booking Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, background: '#f9fafb', padding: 20, borderRadius: 10, marginBottom: 24, fontSize: 13 }}>
+          <div className="tb-print-client-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, background: '#f9fafb', padding: 16, borderRadius: 10, marginBottom: 20, fontSize: 13 }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', marginBottom: 6 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', marginBottom: 5 }}>
                 BILLED TO (CLIENT)
               </div>
               <div style={{ fontSize: 15, fontWeight: 700, color: '#111' }}>{invoice.clientName}</div>
@@ -239,7 +227,7 @@ export default function InvoicePrintModal({ invoice, onClose }) {
             </div>
 
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', marginBottom: 6 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase', marginBottom: 5 }}>
                 ITINERARY DETAILS
               </div>
               <div style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>{invoice.destination || 'Special Tour'}</div>
@@ -249,33 +237,35 @@ export default function InvoicePrintModal({ invoice, onClose }) {
             </div>
           </div>
 
-          {/* Line Items Table */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 24, fontSize: 13 }}>
-            <thead>
-              <tr style={{ background: '#0B1310', color: '#fff' }}>
-                <th style={{ padding: '10px 12px', textAlign: 'left', borderRadius: '6px 0 0 0' }}>Service Description</th>
-                <th style={{ padding: '10px 12px', textAlign: 'center' }}>Qty</th>
-                <th style={{ padding: '10px 12px', textAlign: 'right' }}>Rate (₹)</th>
-                <th style={{ padding: '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0' }}>Amount (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoice.items && invoice.items.map((item, idx) => {
-                const rowTotal = (Number(item.qty) || 1) * (Number(item.rate) || 0);
-                return (
-                  <tr key={idx} style={{ borderBottom: '1px solid #eee', background: idx % 2 === 0 ? '#fff' : '#fcfcfc' }}>
-                    <td style={{ padding: '12px', textAlign: 'left' }}>
-                      <div style={{ fontWeight: 600, color: '#111' }}>{item.title}</div>
-                      {item.sub && <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{item.sub}</div>}
-                    </td>
-                    <td style={{ padding: '12px', textAlign: 'center' }}>{item.qty}</td>
-                    <td style={{ padding: '12px', textAlign: 'right' }}>₹{Number(item.rate).toLocaleString('en-IN')}</td>
-                    <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>₹{rowTotal.toLocaleString('en-IN')}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {/* Line Items Table in Responsive Container */}
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 20 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: '#0B1310', color: '#fff' }}>
+                  <th style={{ padding: '10px 12px', textAlign: 'left', borderRadius: '6px 0 0 0' }}>Service Description</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center' }}>Qty</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right' }}>Rate (₹)</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0' }}>Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.items && invoice.items.map((item, idx) => {
+                  const rowTotal = (Number(item.qty) || 1) * (Number(item.rate) || 0);
+                  return (
+                    <tr key={idx} style={{ borderBottom: '1px solid #eee', background: idx % 2 === 0 ? '#fff' : '#fcfcfc' }}>
+                      <td style={{ padding: '10px 12px', textAlign: 'left' }}>
+                        <div style={{ fontWeight: 600, color: '#111' }}>{item.title}</div>
+                        {item.sub && <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>{item.sub}</div>}
+                      </td>
+                      <td style={{ padding: '10px 12px', textAlign: 'center' }}>{item.qty}</td>
+                      <td style={{ padding: '10px 12px', textAlign: 'right' }}>₹{Number(item.rate).toLocaleString('en-IN')}</td>
+                      <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>₹{rowTotal.toLocaleString('en-IN')}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
           {/* Totals Calculation */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>

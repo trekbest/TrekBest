@@ -25,7 +25,7 @@ export default function Navbar({ currentView, onViewChange, invoiceCount = 0, on
       </div>
 
       {/* Direct Live Helpline & Email Info */}
-      <div style={{
+      <div className="tb-nav-helpline" style={{
         display: 'flex',
         alignItems: 'center',
         gap: 12,

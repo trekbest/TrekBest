@@ -222,14 +222,8 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer style={{
-        background: 'var(--tb-dark-card)',
-        borderTop: '1px solid var(--tb-card-border)',
-        padding: '36px 24px',
-        textAlign: 'center',
-        marginTop: 60
-      }}>
-        <div style={{
+      <footer className="tb-footer">
+        <div className="tb-footer-content" style={{
           maxWidth: 1000,
           margin: '0 auto',
           display: 'flex',
@@ -251,9 +245,9 @@ export default function App() {
             </div>
           </div>
 
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span>📞 +91 98249 99054 / +91 95104 42740</span>
-            <span>✉️ trekbest30@gmail.com</span>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <a href="tel:+919824999054" style={{ color: 'inherit', textDecoration: 'none' }}>📞 +91 98249 99054 / +91 95104 42740</a>
+            <a href="mailto:trekbest30@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>✉️ trekbest30@gmail.com</a>
           </div>
 
           <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>

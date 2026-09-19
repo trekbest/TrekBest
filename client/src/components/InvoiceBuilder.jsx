@@ -332,9 +332,9 @@ export default function InvoiceBuilder({
   };
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '36px 24px' }}>
+    <div className="tb-page-container">
       {/* Title Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 28 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {editingInvoice && (
@@ -356,14 +356,14 @@ export default function InvoiceBuilder({
                 <ArrowLeft size={14} /> Back
               </button>
             )}
-            <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-heading)', fontWeight: 800, margin: 0, color: '#fff' }}>
+            <h1 style={{ fontSize: 'clamp(1.4rem, 4vw, 2rem)', fontFamily: 'var(--font-heading)', fontWeight: 800, margin: 0, color: '#fff' }}>
               {editingInvoice ? 'Edit' : 'Create'} <span style={{ color: 'var(--tb-orange)' }}>Travel Invoice & Voucher</span>
             </h1>
           </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 6, marginBottom: 0 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 6, marginBottom: 0 }}>
             {editingInvoice
-              ? `Editing invoice ${editingInvoice.invoiceNo} stored in SQLite database.`
-              : 'Generate itemized travel quotes, calculate GST, and record directly to SQLite database.'}
+              ? `Editing invoice ${editingInvoice.invoiceNo} stored in cloud database.`
+              : 'Generate itemized travel quotes, calculate GST, and record directly to cloud database.'}
           </p>
         </div>
 
@@ -556,7 +556,7 @@ export default function InvoiceBuilder({
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr auto', gap: 12, alignItems: 'end' }}>
+            <div className="tb-custom-form-grid">
               <div>
                 <label style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>Inclusion Title *</label>
                 <input
@@ -703,16 +703,16 @@ export default function InvoiceBuilder({
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
+      <div className="tb-builder-layout">
         {/* Left Column: Client Details & Line Items */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* Client Details Section */}
-          <div style={{ background: 'var(--tb-dark-card)', padding: 24, borderRadius: 16, border: '1px solid var(--tb-card-border)' }}>
-            <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'var(--tb-orange)', textTransform: 'uppercase', letterSpacing: 1 }}>
+          <div style={{ background: 'var(--tb-dark-card)', padding: '20px 22px', borderRadius: 16, border: '1px solid var(--tb-card-border)' }}>
+            <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 16, color: 'var(--tb-orange)', textTransform: 'uppercase', letterSpacing: 1 }}>
               Client & Itinerary Overview
             </h4>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div className="tb-client-grid">
               <div>
                 <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Client Full Name *</label>
                 <input
@@ -748,20 +748,20 @@ export default function InvoiceBuilder({
 
               <div>
                 <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
-                  Client Email <span style={{ color: 'var(--tb-green)', fontSize: 11, fontWeight: 600 }}>• Auto-sends voucher ✉️</span>
+                  Client Email (for Auto-Voucher Delivery)
                 </label>
                 <input
                   type="email"
                   value={formData.clientEmail}
                   onChange={e => setFormData({ ...formData, clientEmail: e.target.value })}
-                  placeholder="client@example.com"
+                  placeholder="rahul@example.com"
                   style={{ width: '100%', padding: '9px 12px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 8, fontSize: 13 }}
                 />
               </div>
 
               <div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
-                  <Calendar size={13} style={{ color: 'var(--tb-orange)' }} />
+                  <Calendar size={13} color="var(--tb-orange)" />
                   <span>Travel Date</span>
                 </label>
                 <input
@@ -770,7 +770,7 @@ export default function InvoiceBuilder({
                   onChange={e => setFormData({ ...formData, travelDate: e.target.value })}
                   style={{
                     width: '100%',
-                    padding: '9px 12px',
+                    padding: '8px 12px',
                     background: 'var(--tb-input-bg)',
                     border: '1px solid var(--tb-input-border)',
                     color: '#fff',
@@ -793,7 +793,7 @@ export default function InvoiceBuilder({
                 />
               </div>
 
-              <div style={{ gridColumn: 'span 2' }}>
+              <div className="tb-client-grid-span-2" style={{ gridColumn: 'span 2' }}>
                 <label style={{ display: 'block', fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Client Billing Address</label>
                 <input
                   type="text"
@@ -807,9 +807,9 @@ export default function InvoiceBuilder({
           </div>
 
           {/* Line Items Section */}
-          <div style={{ background: 'var(--tb-dark-card)', padding: 24, borderRadius: 16, border: '1px solid var(--tb-card-border)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--tb-orange)', textTransform: 'uppercase', letterSpacing: 1 }}>
+          <div style={{ background: 'var(--tb-dark-card)', padding: '20px 22px', borderRadius: 16, border: '1px solid var(--tb-card-border)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+              <h4 style={{ fontSize: 13, fontWeight: 700, color: 'var(--tb-orange)', textTransform: 'uppercase', letterSpacing: 1 }}>
                 Itemized Travel Services ({items.length})
               </h4>
               <button
@@ -833,18 +833,8 @@ export default function InvoiceBuilder({
               </button>
             </div>
 
-            {/* Column Headers */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 75px 120px 40px',
-              gap: 12,
-              padding: '0 14px 6px',
-              fontSize: 11,
-              fontWeight: 700,
-              color: 'var(--text-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: 0.5
-            }}>
+            {/* Column Headers (Desktop) */}
+            <div className="tb-item-header-row">
               <span>Service Description & Inclusions</span>
               <span style={{ textAlign: 'center' }}>Qty</span>
               <span style={{ textAlign: 'right' }}>Rate (₹)</span>
@@ -858,31 +848,25 @@ export default function InvoiceBuilder({
                   <div
                     key={item.id}
                     onClick={() => setActiveItemId(item.id)}
+                    className="tb-item-row"
                     style={{
-                      background: 'var(--tb-dark)',
-                      padding: 14,
-                      borderRadius: 10,
-                      border: isActive ? '1px solid rgba(242, 92, 5, 0.45)' : '1px solid var(--tb-card-border)',
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 75px 120px 40px',
-                      gap: 12,
-                      alignItems: 'center',
-                      transition: 'all 0.2s ease',
-                      boxShadow: isActive ? '0 2px 10px rgba(242, 92, 5, 0.08)' : 'none'
+                      border: isActive ? '1px solid rgba(242, 92, 5, 0.55)' : '1px solid var(--tb-card-border)',
+                      boxShadow: isActive ? '0 2px 12px rgba(242, 92, 5, 0.1)' : 'none'
                     }}
                   >
                     {/* Title & Sub */}
-                    <div>
+                    <div style={{ width: '100%' }}>
                       <input
                         type="text"
                         placeholder="Service / Package title"
                         value={item.title}
                         onFocus={() => setActiveItemId(item.id)}
                         onChange={e => updateItem(item.id, 'title', e.target.value)}
-                        style={{ width: '100%', padding: '7px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, marginBottom: 4 }}
+                        style={{ width: '100%', padding: '7px 10px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, marginBottom: 5 }}
                       />
                       <input
                         type="text"
+                        placeholder="Details / Inclusions (Click quick-add above)"
                         value={item.sub}
                         onFocus={() => setActiveItemId(item.id)}
                         onChange={e => updateItem(item.id, 'sub', e.target.value)}
@@ -899,51 +883,55 @@ export default function InvoiceBuilder({
                       />
                     </div>
 
-                    {/* Qty */}
-                    <div>
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="Qty"
-                        value={item.qty}
-                        onFocus={() => setActiveItemId(item.id)}
-                        onChange={e => updateItem(item.id, 'qty', e.target.value)}
-                        style={{ width: '100%', padding: '7px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'center' }}
-                      />
-                    </div>
+                    {/* Qty, Rate & Delete Row (In desktop: participates in 4-col grid; in mobile: 3-col horizontal row) */}
+                    <div className="tb-item-row-bottom" style={{ display: 'contents' }}>
+                      {/* Qty */}
+                      <div>
+                        <input
+                          type="number"
+                          min="1"
+                          placeholder="Qty"
+                          value={item.qty}
+                          onFocus={() => setActiveItemId(item.id)}
+                          onChange={e => updateItem(item.id, 'qty', e.target.value)}
+                          style={{ width: '100%', padding: '7px 6px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'center' }}
+                        />
+                      </div>
 
-                    {/* Rate */}
-                    <div>
-                      <input
-                        type="number"
-                        placeholder="Rate (₹)"
-                        value={item.rate}
-                        onFocus={() => setActiveItemId(item.id)}
-                        onChange={e => updateItem(item.id, 'rate', e.target.value)}
-                        style={{ width: '100%', padding: '7px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'right' }}
-                      />
-                    </div>
+                      {/* Rate */}
+                      <div>
+                        <input
+                          type="number"
+                          placeholder="Rate (₹)"
+                          value={item.rate}
+                          onFocus={() => setActiveItemId(item.id)}
+                          onChange={e => updateItem(item.id, 'rate', e.target.value)}
+                          style={{ width: '100%', padding: '7px 8px', background: 'var(--tb-input-bg)', border: '1px solid var(--tb-input-border)', color: '#fff', borderRadius: 6, fontSize: 13, textAlign: 'right' }}
+                        />
+                      </div>
 
-                  {/* Delete */}
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
-                      disabled={items.length === 1}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: items.length === 1 ? '#444' : 'var(--tb-red)',
-                        cursor: items.length === 1 ? 'not-allowed' : 'pointer',
-                        padding: 4
-                      }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                      {/* Delete */}
+                      <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <button
+                          type="button"
+                          onClick={() => removeItem(item.id)}
+                          disabled={items.length === 1}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: items.length === 1 ? '#444' : 'var(--tb-red)',
+                            cursor: items.length === 1 ? 'not-allowed' : 'pointer',
+                            padding: 6
+                          }}
+                          title="Delete Row"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </div>
         </div>
