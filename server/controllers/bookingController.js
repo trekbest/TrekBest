@@ -46,9 +46,14 @@ exports.createBooking = async (req, res) => {
 
     const created = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(id);
 
-    // Trigger SMTP email confirmation asynchronously
+    // Trigger SMTP email confirmation
     const { sendBookingConfirmation } = require('../config/email');
-    sendBookingConfirmation(created).catch(e => console.error('Booking email error:', e.message));
+    try {
+      await sendBookingConfirmation(created);
+      console.log(`✅ Booking confirmation email sent to ${created.customeremail}`);
+    } catch (e) {
+      console.error('Booking email error:', e.message);
+    }
 
     res.status(201).json({
       success: true,

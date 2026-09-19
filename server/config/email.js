@@ -2,15 +2,15 @@ const nodemailer = require('nodemailer');
 
 const DEFAULT_SMTP = {
   host: 'smtp.gmail.com',
-  port: 587,
+  port: 465,
   user: 'trekbest30@gmail.com',
-  pass: 'yeim bnsl ifcg mvqs',
+  pass: 'yeimbnslifcgmvqs',
   from: 'TrekBest Travel & Tours <trekbest30@gmail.com>'
 };
 
 // Check if SMTP is configured
 function isSmtpConfigured() {
-  const pass = process.env.SMTP_PASS || DEFAULT_SMTP.pass;
+  const pass = (process.env.SMTP_PASS || DEFAULT_SMTP.pass).replace(/\s+/g, '');
   return Boolean(pass && pass !== 'your_smtp_password_or_app_password');
 }
 
@@ -20,20 +20,34 @@ function getTransporter() {
     return null;
   }
 
+  const user = process.env.SMTP_USER || DEFAULT_SMTP.user;
+  const pass = (process.env.SMTP_PASS || DEFAULT_SMTP.pass).replace(/\s+/g, '');
+
+  // Gmail-specific reliable transport for serverless
+  if (user.endsWith('@gmail.com') || (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail'))) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user,
+        pass
+      }
+    });
+  }
+
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || DEFAULT_SMTP.host,
     port: Number(process.env.SMTP_PORT) || DEFAULT_SMTP.port,
     secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465',
     auth: {
-      user: process.env.SMTP_USER || DEFAULT_SMTP.user,
-      pass: process.env.SMTP_PASS || DEFAULT_SMTP.pass
+      user,
+      pass
     }
   });
 }
 
 // Generic mail sender with fallback
-async function sendMail({ to, subject, html, text }) {
-  const from = process.env.EMAIL_FROM || 'TrekBest Travel & Tours <trekbest30@gmail.com>';
+async function sendMail({ to, bcc, subject, html, text }) {
+  const from = process.env.EMAIL_FROM || DEFAULT_SMTP.from;
 
   if (!isSmtpConfigured()) {
     console.log('====================================================');
@@ -47,14 +61,24 @@ async function sendMail({ to, subject, html, text }) {
 
   try {
     const transporter = getTransporter();
-    const info = await transporter.sendMail({
+    const mailOptions = {
       from,
       to,
       subject,
       text: text || '',
       html
-    });
-    console.log(`✅ Email sent successfully to ${to}. MessageId: ${info.messageId}`);
+    };
+
+    // Add BCC so admin always receives a copy (unless sending to admin already)
+    const adminEmail = 'trekbest30@gmail.com';
+    if (bcc) {
+      mailOptions.bcc = bcc;
+    } else if (to !== adminEmail) {
+      mailOptions.bcc = adminEmail;
+    }
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Email sent successfully to ${to} (BCC: ${mailOptions.bcc || 'none'}). MessageId: ${info.messageId}`);
     return { success: true, messageId: info.messageId };
   } catch (err) {
     console.error(`❌ Failed to send email to ${to}:`, err.message);
@@ -281,6 +305,7 @@ async function sendInvoiceEmail(invoice) {
 
   return sendMail({
     to: invoice.clientEmail,
+    bcc: 'trekbest30@gmail.com',
     subject,
     html
   });

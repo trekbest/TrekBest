@@ -82,13 +82,18 @@ exports.createInvoice = async (req, res) => {
 
     // Automatically send invoice email to client if clientEmail is provided
     let emailSent = false;
+    let emailMessage = '';
     if (formattedInvoice.clientEmail) {
       try {
         const { sendInvoiceEmail } = require('../config/email');
-        sendInvoiceEmail(formattedInvoice).catch(err => {
-          console.error('Async invoice email sending error:', err.message);
-        });
-        emailSent = true;
+        const emailResult = await sendInvoiceEmail(formattedInvoice);
+        if (emailResult && emailResult.success) {
+          emailSent = true;
+          emailMessage = `Voucher emailed to ${formattedInvoice.clientEmail}`;
+          console.log(`✅ Invoice email automatically delivered to ${formattedInvoice.clientEmail}`);
+        } else {
+          console.warn(`⚠️ Email delivery notice: ${emailResult?.error || 'Simulated or unverified'}`);
+        }
       } catch (emailErr) {
         console.error('Invoice email dispatch failed:', emailErr.message);
       }
@@ -100,6 +105,7 @@ exports.createInvoice = async (req, res) => {
         ? `Invoice created successfully and sent to ${formattedInvoice.clientEmail}!`
         : 'Invoice created successfully!',
       emailSent,
+      emailMessage,
       invoice: formattedInvoice
     });
   } catch (err) {

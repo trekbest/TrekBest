@@ -36,7 +36,12 @@ exports.createMessage = async (req, res) => {
 
     const contactPayload = { name, email, phone, subject, message };
     const { sendContactNotification } = require('../config/email');
-    sendContactNotification(contactPayload).catch(e => console.error('Contact email error:', e.message));
+    try {
+      await sendContactNotification(contactPayload);
+      console.log(`✅ Contact inquiry confirmation email sent to ${email}`);
+    } catch (e) {
+      console.error('Contact email error:', e.message);
+    }
 
     res.status(201).json({
       success: true,
