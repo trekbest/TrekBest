@@ -13,6 +13,8 @@ import {
   PlusCircle,
   Calendar
 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import ConfirmModal from './ConfirmModal';
 
 const INITIAL_FORM_STATE = {
   clientName: '',
@@ -71,6 +73,8 @@ export default function InvoiceBuilder({
   });
 
   const [activeItemId, setActiveItemId] = useState(() => (INITIAL_ITEMS_STATE[0]?.id || 1));
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const toast = useToast();
 
   // Keep activeItemId valid if items change
   useEffect(() => {
@@ -227,21 +231,25 @@ export default function InvoiceBuilder({
     setItems(items.filter(item => item.id !== id));
   };
 
+  const handleConfirmReset = () => {
+    const newId = Date.now();
+    setFormData(INITIAL_FORM_STATE);
+    setItems([
+      {
+        id: newId,
+        title: '',
+        sub: '',
+        qty: 1,
+        rate: ''
+      }
+    ]);
+    setActiveItemId(newId);
+    setShowResetConfirm(false);
+    toast.info('Invoice form reset to a clean blank draft.', 'Form Cleared');
+  };
+
   const resetForm = () => {
-    if (confirm('Clear form and reset to a fresh blank invoice?')) {
-      const newId = Date.now();
-      setFormData(INITIAL_FORM_STATE);
-      setItems([
-        {
-          id: newId,
-          title: '',
-          sub: '',
-          qty: 1,
-          rate: ''
-        }
-      ]);
-      setActiveItemId(newId);
-    }
+    setShowResetConfirm(true);
   };
 
   // Calculations
@@ -254,11 +262,11 @@ export default function InvoiceBuilder({
 
   const handleSave = async () => {
     if (!formData.clientName.trim()) {
-      alert('Please enter client name');
+      toast.warning('Please enter client name before saving the invoice.', 'Missing Client Name');
       return;
     }
     if (!items.length || items.every(i => !i.title.trim())) {
-      alert('Please add at least one line item with a title');
+      toast.warning('Please add at least one line item with a title and rate.', 'Missing Tour Items');
       return;
     }
 
@@ -303,7 +311,7 @@ export default function InvoiceBuilder({
       }
       setTimeout(() => setSaveSuccess(null), 8000);
     } catch (err) {
-      alert('Error saving invoice: ' + err.message);
+      toast.error('Error saving invoice: ' + err.message, 'Save Failed');
     } finally {
       setSaving(false);
     }
@@ -1030,12 +1038,24 @@ export default function InvoiceBuilder({
                   marginTop: 8
                 }}
               >
-                {saving ? 'Saving...' : editingInvoice ? 'Update Invoice in SQLite' : 'Save & Record Invoice'}
+                {saving ? 'Saving...' : editingInvoice ? 'Update Invoice in Database' : 'Save & Record Invoice'}
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Reset Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={handleConfirmReset}
+        title="Clear Invoice Form?"
+        message="Are you sure you want to discard your current form edits and reset to a clean blank invoice?"
+        confirmText="Yes, Clear Form"
+        cancelText="Keep Editing"
+        variant="warning"
+      />
     </div>
   );
 }

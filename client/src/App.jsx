@@ -3,9 +3,14 @@ import Navbar from './components/Navbar';
 import InvoiceBuilder from './components/InvoiceBuilder';
 import InvoiceListView from './components/InvoiceListView';
 import InvoicePrintModal from './components/InvoicePrintModal';
+import ConfirmModal from './components/ConfirmModal';
+import SuccessModal from './components/SuccessModal';
+import { useToast } from './context/ToastContext';
 import { api } from './services/api';
 
 export default function App() {
+  const toast = useToast();
+
   // 'list' | 'builder'
   const [currentView, setCurrentView] = useState('list');
   const [invoices, setInvoices] = useState([]);
@@ -17,6 +22,13 @@ export default function App() {
 
   // Active invoice for print modal
   const [activePrintInvoice, setActivePrintInvoice] = useState(null);
+
+  // Delete Confirmation Modal State
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Success Celebration Modal State
+  const [successInvoice, setSuccessInvoice] = useState(null);
 
   // Load Invoices & Financial Stats
   const loadInvoiceData = async () => {
@@ -43,6 +55,10 @@ export default function App() {
   const handleSaveInvoice = async (invoiceData) => {
     const res = await api.createInvoice(invoiceData);
     await loadInvoiceData();
+    if (res?.invoice) {
+      setSuccessInvoice(res.invoice);
+    }
+    toast.success(`Invoice ${res?.invoice?.invoiceNo || ''} created successfully!`);
     return res;
   };
 
@@ -51,6 +67,10 @@ export default function App() {
     const res = await api.updateInvoice(id, invoiceData);
     await loadInvoiceData();
     setEditingInvoice(null);
+    if (res?.invoice) {
+      setSuccessInvoice(res.invoice);
+    }
+    toast.success(`Invoice ${res?.invoice?.invoiceNo || id} updated successfully!`);
     return res;
   };
 
@@ -62,25 +82,37 @@ export default function App() {
       // Refresh stats
       const sRes = await api.getStats().catch(() => ({ stats: {} }));
       setStats(sRes.stats || {});
+      toast.success(`Invoice status updated to ${status}.`);
     } catch (err) {
       console.error('Error updating status:', err);
-      alert('Failed to update status: ' + err.message);
+      toast.error('Failed to update status: ' + err.message);
     }
   };
 
-  // Action: Delete Invoice
-  const handleDeleteInvoice = async (id) => {
-    if (!window.confirm('Are you sure you want to permanently delete this invoice record from SQLite?')) {
-      return;
-    }
+  // Action: Request Delete Invoice (Opens ConfirmModal)
+  const handleDeleteInvoice = (invOrId) => {
+    const target = typeof invOrId === 'object' && invOrId !== null
+      ? invOrId
+      : invoices.find(i => i.id === invOrId) || { id: invOrId };
+    setDeleteTarget(target);
+  };
+
+  // Action: Confirm Delete Invoice
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await api.deleteInvoice(id);
-      setInvoices(prev => prev.filter(inv => inv.id !== id));
+      setIsDeleting(true);
+      await api.deleteInvoice(deleteTarget.id);
+      setInvoices(prev => prev.filter(inv => inv.id !== deleteTarget.id));
       const sRes = await api.getStats().catch(() => ({ stats: {} }));
       setStats(sRes.stats || {});
+      toast.success(`Invoice ${deleteTarget.invoiceNo || ''} deleted permanently.`);
+      setDeleteTarget(null);
     } catch (err) {
       console.error('Error deleting invoice:', err);
-      alert('Failed to delete invoice: ' + err.message);
+      toast.error('Failed to delete invoice: ' + err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -156,6 +188,38 @@ export default function App() {
           onClose={() => setActivePrintInvoice(null)}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => {
+          if (!isDeleting) setDeleteTarget(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Travel Invoice Record"
+        subtitle={deleteTarget ? `${deleteTarget.invoiceNo || 'Draft'} • ${deleteTarget.clientName || 'Client'} • ₹${Number(deleteTarget.total || 0).toLocaleString('en-IN')}` : ''}
+        message="Are you sure you want to permanently delete this invoice record from your cloud database? All billing calculations and items will be deleted permanently."
+        confirmText="Yes, Delete Permanently"
+        cancelText="Keep Invoice"
+        variant="danger"
+        loading={isDeleting}
+      />
+
+      {/* Invoice Saved Celebration Success Modal */}
+      <SuccessModal
+        isOpen={Boolean(successInvoice)}
+        onClose={() => setSuccessInvoice(null)}
+        invoice={successInvoice}
+        onPrintPreview={(inv) => {
+          setActivePrintInvoice(inv);
+        }}
+        onCreateAnother={() => {
+          handleNewInvoice();
+        }}
+        onViewList={() => {
+          setCurrentView('list');
+        }}
+      />
 
       {/* Footer */}
       <footer style={{

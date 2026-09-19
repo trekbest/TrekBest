@@ -516,7 +516,7 @@ export default function InvoiceListView({
 
                         {/* Delete */}
                         <button
-                          onClick={() => onDeleteInvoice(inv.id)}
+                          onClick={() => onDeleteInvoice(inv)}
                           style={{
                             background: 'rgba(239, 68, 68, 0.1)',
                             border: '1px solid rgba(239, 68, 68, 0.3)',

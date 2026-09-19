@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Printer, Download, CheckCircle2, Mail, Loader2 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 import { api } from '../services/api';
 
 function formatTravelDate(dateStr) {
@@ -17,6 +18,7 @@ function formatTravelDate(dateStr) {
 export default function InvoicePrintModal({ invoice, onClose }) {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailStatus, setEmailStatus] = useState(null);
+  const toast = useToast();
 
   if (!invoice) return null;
 
@@ -26,21 +28,23 @@ export default function InvoicePrintModal({ invoice, onClose }) {
 
   const handleSendEmail = async () => {
     if (!invoice.id) {
-      alert('Please save the invoice first before emailing.');
+      toast.warning('Please save this invoice to the database before emailing the client.', 'Save First');
       return;
     }
     if (!invoice.clientEmail) {
-      alert('This invoice does not have a client email specified.');
+      toast.warning('This invoice does not have a client email specified.', 'Missing Email');
       return;
     }
     try {
       setSendingEmail(true);
       setEmailStatus(null);
       const res = await api.sendInvoiceEmail(invoice.id);
-      setEmailStatus(res.message || `Sent to ${invoice.clientEmail}!`);
-      setTimeout(() => setEmailStatus(null), 5000);
+      const msg = res.message || `Sent to ${invoice.clientEmail}!`;
+      setEmailStatus(msg);
+      toast.success(msg, 'Voucher Emailed');
+      setTimeout(() => setEmailStatus(null), 6000);
     } catch (err) {
-      alert('Failed to send email: ' + err.message);
+      toast.error('Failed to send email: ' + err.message, 'Email Delivery Failed');
     } finally {
       setSendingEmail(false);
     }
@@ -53,26 +57,28 @@ export default function InvoicePrintModal({ invoice, onClose }) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.85)',
-      backdropFilter: 'blur(8px)',
+      backgroundColor: 'rgba(5, 10, 8, 0.88)',
+      backdropFilter: 'blur(10px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 1000,
-      padding: 20
+      padding: 20,
+      animation: 'tbModalFadeIn 0.25s ease'
     }}>
       <div style={{
         background: '#fff',
         color: '#1a1a1a',
         width: '100%',
-        maxWidth: 820,
+        maxWidth: 840,
         maxHeight: '94vh',
         overflowY: 'auto',
-        borderRadius: 16,
+        borderRadius: 20,
         padding: '36px 40px',
         position: 'relative',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-        fontFamily: 'Inter, sans-serif'
+        boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 0, 0, 0.5)',
+        fontFamily: 'Inter, sans-serif',
+        animation: 'tbModalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
       }}>
         {/* Floating Print Bar */}
         <div className="no-print" style={{
